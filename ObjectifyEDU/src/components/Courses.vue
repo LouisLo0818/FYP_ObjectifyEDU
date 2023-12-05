@@ -12,30 +12,32 @@ import completed from '@/examples/completed.vue';
       </div>
       <div class="container course-container">
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-4">
-          <div class="col">
-            <div class="p-4 course-square">
-              <img src="src/assets/img/tragicomedy.png" class="course-logo" />
-              <h6>Social and Emotional Development (Part.1)</h6>
-              <div class="lesson-container">
-                <div class="lesson-number">
-                  <i class="bx bx-book-open">&nbsp;</i>
-                  <span>10 Lessons</span>
+          <router-link to="/Courses/Games" style="text-decoration: none; color: inherit;">
+            <div class="col">
+              <div class="p-4 course-square">
+                <img src="src/assets/img/tragicomedy.png" class="course-logo" />
+                <h6>Social and Emotional Development (Part.1)</h6>
+                <div class="lesson-container">
+                  <div class="lesson-number">
+                    <i class="bx bx-book-open">&nbsp;</i>
+                    <span>10 Lessons</span>
+                  </div>
+                  <div class="lesson-time">
+                    <i class="bx bx-time">&nbsp;</i>
+                    <span>10 hours</span>
+                  </div>
                 </div>
-                <div class="lesson-time">
-                  <i class="bx bx-time">&nbsp;</i>
-                  <span>10 hours</span>
+                <div class="progress-container">
+                  <div class="progress progress-height">
+                    <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
+                      style="width: 30%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
+                      aria-valuemax="100"></div>
+                  </div>
+                  <span>{{ SEDbar }}</span>
                 </div>
-              </div>
-              <div class="progress-container">
-                <div class="progress progress-height">
-                  <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                    style="width: 30%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
-                    aria-valuemax="100"></div>
-                </div>
-                <span>{{ SEDbar }}</span>
               </div>
             </div>
-          </div>
+          </router-link>
           <div class="col">
             <div class="p-4 course-square">
               <img src="src/assets/img/tragicomedy.png" class="course-logo" />

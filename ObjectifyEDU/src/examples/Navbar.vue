@@ -38,6 +38,8 @@ export default {
         return "Dashbord";
       } else if (currentPath === "/courses") {
         return "Courses";
+      } else if (currentPath === "/Courses/Games") {
+        return "Courses / Games";
       }
     },
   },

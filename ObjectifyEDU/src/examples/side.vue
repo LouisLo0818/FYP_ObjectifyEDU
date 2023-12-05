@@ -5,19 +5,19 @@
     </div>
     <ul class="sidebar-items">
       <router-link to="/Dashboard" class="path-title">
-        <li :class="{'path-link': true,'sidebar-location': currentLocat(0), 'non-sidebar-location': noncurrentlocat(0)}">
+        <li :class="sidebarItemClass('/Dashboard')">
           <i class="bx bx-home path-icon"></i>
           <span>Dashboard</span>
         </li>
       </router-link>
       <router-link to="/courses" class="path-title">
-        <li :class="{'path-link': true,'sidebar-location': currentLocat(1), 'non-sidebar-location': noncurrentlocat(1)}">
+        <li :class="sidebarItemClass('/courses')">
           <i class="bx bx-bookmark path-icon"></i>
           <span>Courses</span>
         </li>
       </router-link>
       <a href="#" class="path-title">
-        <li class="path-link">
+        <li :class="sidebarItemClass('/schedule')">
           <i class="bx bx-calendar path-icon"></i>
           <span>Schedule</span>
         </li>
@@ -25,24 +25,29 @@
     </ul>
   </div>
 </template>
+
 <script>
 export default {
-  methods: {
-    currentLocat(index) {
-      // Check the current route path using this.$route.path
-      const currentPath = this.$route.path;
-      // Define the route paths associated with each list item
-      const routePaths = ['/Dashboard', '/courses'];
-      // Check if the current path matches the path associated with the index
-      return currentPath === routePaths[index];
+  computed: {
+    currentPath() {
+      return this.$route.path;
     },
-    noncurrentlocat(index) {
-      // Check the current route path using this.$route.path
-      const currentPath = this.$route.path;
-      // Define the route paths associated with each list item
-      const routePaths = ['/Dashboard', '/courses'];
-      // Check if the current path matches the path associated with the index
-      return currentPath !== routePaths[index];
+  },
+  methods: {
+    sidebarItemClass(routePath) {
+      if (this.currentPath.startsWith('/courses') || this.currentPath.startsWith('/Courses')) {
+        return {
+          'path-link': true,
+          'sidebar-location': routePath.startsWith('/courses'),
+          'non-sidebar-location': !routePath.startsWith('/courses'),
+        };
+      } else {
+        return {
+          'path-link': true,
+          'sidebar-location': this.currentPath === routePath,
+          'non-sidebar-location': this.currentPath !== routePath,
+        };
+      }
     },
   },
 };
