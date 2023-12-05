@@ -1,0 +1,27 @@
+{
+  "name": "objectifyedu",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "serve": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fortawesome/vue-fontawesome": "^3.0.3",
+    "bootstrap": "^5.3.2",
+    "bootstrap-icons": "^1.11.1",
+    "bootstrap-vue": "^2.23.1",
+    "boxicons": "^2.1.4",
+    "chart.js": "^4.4.0",
+    "font-awesome": "^4.7.0",
+    "jwt-decode": "^4.0.0",
+    "vue": "^3.3.4",
+    "vue-chartjs": "^5.2.0",
+    "vue-router": "^4.2.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.3.4",
+    "vite": "^4.4.9"
+  }
+}
