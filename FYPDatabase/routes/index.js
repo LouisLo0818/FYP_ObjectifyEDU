@@ -70,8 +70,6 @@ router.post("/api/login", async function (req, res) {
   }
 });
 
-//GET medical record
-//pipeline: array of operations, use the result of 1st operation can be used for the 2nd operation
 router.post("/api/Process", async function (req, res) {
   //verifyToken is a middleware function
   // const database = client.db('eLearning');
@@ -90,6 +88,25 @@ router.post("/api/Process", async function (req, res) {
   console.log(stuRecord);
 
   return res.json(stuRecord);
+});
+
+router.get("/api/Courses", async function (req, res) {
+  //verifyToken is a middleware function
+  // const database = client.db('eLearning');
+
+  let courseRecords = await client
+    .db("eLearning")
+    .collection("Course")
+    .find({})
+    .toArray();
+
+  if (!courseRecords || courseRecords.length === 0) {
+    return res.status(404).send("No course records found.");
+  }
+
+  console.log(courseRecords);
+
+  return res.json(courseRecords);
 });
 
 module.exports = router;

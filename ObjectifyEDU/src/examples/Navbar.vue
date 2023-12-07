@@ -38,7 +38,7 @@ export default {
         return "Dashbord";
       } else if (currentPath === "/courses") {
         return "Courses";
-      } else if (currentPath === "/Courses/Games") {
+      } else if (currentPath.startsWith("/Courses/Games")) {
         return "Courses / Games";
       }
     },
@@ -84,7 +84,8 @@ export default {
 
 .menu-button:hover {
   background-color: #f7f7f8;
-  border-radius: 100%; /* Make it a circle */
+  border-radius: 100%;
+  /* Make it a circle */
 }
 
 .dropdown {
@@ -109,7 +110,8 @@ export default {
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
-  border-radius: 8px; /* Add border-radius to the dropdown menu */
+  border-radius: 8px;
+  /* Add border-radius to the dropdown menu */
   height: 155px;
 }
 

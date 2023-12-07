@@ -12,7 +12,6 @@ import sidebar from '@/examples/Sidebar.vue';
 import navbar from '@/examples/Navbar.vue';
 import side from '@/examples/side.vue';
 
-
 const app = createApp(App)
 
 app.use(router)

@@ -12,8 +12,37 @@ import completed from '@/examples/completed.vue';
       </div>
       <div class="container course-container">
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-4">
-          <router-link to="/Courses/Games" style="text-decoration: none; color: inherit;">
+
+          <router-link v-for="(id, index) in  course_id " :to="`/Courses/Games/${id}`"
+            style="text-decoration: none; color: inherit;">
             <div class="col">
+              <div class="p-4 course-square">
+                <img :src="course_img[index]" class="course-logo" />
+                <h6>{{ course_name[index] }}</h6>
+                <div class="lesson-container">
+                  <div class="lesson-number">
+                    <i class="bx bx-book-open">&nbsp;</i>
+                    <span>{{ lessons[index] }}</span>
+                  </div>
+                  <div class="lesson-time">
+                    <i class="bx bx-time">&nbsp;</i>
+                    <span>{{ time[index] }}</span>
+                  </div>
+                </div>
+                <div class="progress-container">
+                  <div class="progress progress-height">
+                    <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
+                      style="width: 30%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
+                      aria-valuemax="100"></div>
+                  </div>
+                  <span>{{ SEDbar }}</span>
+                </div>
+              </div>
+            </div>
+          </router-link>
+
+          <!-- <router-link to="/Courses/Games" style="text-decoration: none; color: inherit;">
+            <div class="col" id="SE001">
               <div class="p-4 course-square">
                 <img src="src/assets/img/tragicomedy.png" class="course-logo" />
                 <h6>Social and Emotional Development (Part.1)</h6>
@@ -200,7 +229,7 @@ import completed from '@/examples/completed.vue';
                 <span>{{ SEDbar }}</span>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -211,13 +240,56 @@ export default {
   data() {
     return {
       SEDbar: "",
+      course_id: [],
+      course_name: [],
+      time: [],
+      course_img: [],
+      lessons: [],
     };
   },
   mounted() {
     // Get the element
-    const SEDbar = document.getElementById("SEDbar").style.width;
-    this.SEDbar = SEDbar;
+    //const SEDbar = document.getElementById("SEDbar").style.width;
+    //this.SEDbar = SEDbar;
+    this.fetchCourseId();
   },
+  methods: {
+    async fetchCourseId() {
+      try {
+        const token = localStorage.getItem("user");
+        const response = await fetch("/api/Courses", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const jsonData = await response.json();
+
+        this.course_id = jsonData.map(item => item.course_id);
+        this.course_name = jsonData.map(item => item.course_name);
+        this.time = jsonData.map(item => item.time);
+        this.course_img = jsonData.map(item => item.course_img);
+        this.lessons = jsonData.map(item => item.games.length);
+        
+
+        console.log(this.course_id);
+        console.log(this.course_name);
+        console.log(this.time);
+        console.log(this.course_img);
+        console.log(this.lessons);
+        console.log(jsonData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
+  }
 };
 </script>
 
