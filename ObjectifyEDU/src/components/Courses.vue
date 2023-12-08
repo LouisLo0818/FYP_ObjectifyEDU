@@ -22,17 +22,17 @@ import completed from '@/examples/completed.vue';
                 <div class="lesson-container">
                   <div class="lesson-number">
                     <i class="bx bx-book-open">&nbsp;</i>
-                    <span>{{ lessons[index] }}</span>
+                    <span>{{ lessons[index] }} Lessons</span>
                   </div>
                   <div class="lesson-time">
                     <i class="bx bx-time">&nbsp;</i>
-                    <span>{{ time[index] }}</span>
+                    <span>{{ time[index] }} hours</span>
                   </div>
                 </div>
                 <div class="progress-container">
                   <div class="progress progress-height">
                     <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                      style="width: 30%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
+                      style="width: 0%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
                       aria-valuemax="100"></div>
                   </div>
                   <span>{{ SEDbar }}</span>
@@ -40,196 +40,6 @@ import completed from '@/examples/completed.vue';
               </div>
             </div>
           </router-link>
-
-          <!-- <router-link to="/Courses/Games" style="text-decoration: none; color: inherit;">
-            <div class="col" id="SE001">
-              <div class="p-4 course-square">
-                <img src="src/assets/img/tragicomedy.png" class="course-logo" />
-                <h6>Social and Emotional Development (Part.1)</h6>
-                <div class="lesson-container">
-                  <div class="lesson-number">
-                    <i class="bx bx-book-open">&nbsp;</i>
-                    <span>10 Lessons</span>
-                  </div>
-                  <div class="lesson-time">
-                    <i class="bx bx-time">&nbsp;</i>
-                    <span>10 hours</span>
-                  </div>
-                </div>
-                <div class="progress-container">
-                  <div class="progress progress-height">
-                    <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                      style="width: 30%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
-                      aria-valuemax="100"></div>
-                  </div>
-                  <span>{{ SEDbar }}</span>
-                </div>
-              </div>
-            </div>
-          </router-link>
-          <div class="col">
-            <div class="p-4 course-square">
-              <img src="src/assets/img/tragicomedy.png" class="course-logo" />
-              <h6>Social and Emotional Development (Part.2)</h6>
-              <div class="lesson-container">
-                <div class="lesson-number">
-                  <i class="bx bx-book-open">&nbsp;</i>
-                  <span>10 Lessons</span>
-                </div>
-                <div class="lesson-time">
-                  <i class="bx bx-time">&nbsp;</i>
-                  <span>10 hours</span>
-                </div>
-              </div>
-              <div class="progress-container">
-                <completed />
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="p-4 course-square">
-              <img src="src/assets/img/math.png" class="course-logo" />
-              <h6>Founddations of mathematics (Part.1)</h6>
-              <div class="lesson-container">
-                <div class="lesson-number">
-                  <i class="bx bx-book-open">&nbsp;</i>
-                  <span>10 Lessons</span>
-                </div>
-                <div class="lesson-time">
-                  <i class="bx bx-time">&nbsp;</i>
-                  <span>10 hours</span>
-                </div>
-              </div>
-              <div class="progress-container">
-                <div class="progress progress-height">
-                  <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                    style="width: 60%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
-                    aria-valuemax="100"></div>
-                </div>
-                <span>{{ SEDbar }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="p-4 course-square">
-              <img src="src/assets/img/math.png" class="course-logo" />
-              <h6>Founddations of mathematics (Part.2)</h6>
-              <div class="lesson-container">
-                <div class="lesson-number">
-                  <i class="bx bx-book-open">&nbsp;</i>
-                  <span>10 Lessons</span>
-                </div>
-                <div class="lesson-time">
-                  <i class="bx bx-time">&nbsp;</i>
-                  <span>10 hours</span>
-                </div>
-              </div>
-              <div class="progress-container">
-                <div class="progress progress-height">
-                  <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                    style="width: 10%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
-                    aria-valuemax="100"></div>
-                </div>
-                <span>{{ SEDbar }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="p-4 course-square">
-              <img src="src/assets/img/language.png" class="course-logo" />
-              <h6>Lanuage (Part.1)</h6>
-              <div class="lesson-container">
-                <div class="lesson-number">
-                  <i class="bx bx-book-open">&nbsp;</i>
-                  <span>10 Lessons</span>
-                </div>
-                <div class="lesson-time">
-                  <i class="bx bx-time">&nbsp;</i>
-                  <span>10 hours</span>
-                </div>
-              </div>
-              <div class="progress-container">
-                <div class="progress progress-height">
-                  <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                    style="width: 10%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
-                    aria-valuemax="100"></div>
-                </div>
-                <span>{{ SEDbar }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="p-4 course-square">
-              <img src="src/assets/img/language.png" class="course-logo" />
-              <h6>Lanuage (Part.2)</h6>
-              <div class="lesson-container">
-                <div class="lesson-number">
-                  <i class="bx bx-book-open">&nbsp;</i>
-                  <span>10 Lessons</span>
-                </div>
-                <div class="lesson-time">
-                  <i class="bx bx-time">&nbsp;</i>
-                  <span>10 hours</span>
-                </div>
-              </div>
-              <div class="progress-container">
-                <div class="progress progress-height">
-                  <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                    style="width: 90%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
-                    aria-valuemax="100"></div>
-                </div>
-                <span>{{ SEDbar }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="p-4 course-square">
-              <img src="src/assets/img/reaction.png" class="course-logo" />
-              <h6>Reaction (Part.1)</h6>
-              <div class="lesson-container">
-                <div class="lesson-number">
-                  <i class="bx bx-book-open">&nbsp;</i>
-                  <span>10 Lessons</span>
-                </div>
-                <div class="lesson-time">
-                  <i class="bx bx-time">&nbsp;</i>
-                  <span>10 hours</span>
-                </div>
-              </div>
-              <div class="progress-container">
-                <div class="progress progress-height">
-                  <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                    style="width: 10%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
-                    aria-valuemax="100"></div>
-                </div>
-                <span>{{ SEDbar }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="p-4 course-square">
-              <img src="src/assets/img/reaction.png" class="course-logo" />
-              <h6>Reaction (Part.2)</h6>
-              <div class="lesson-container">
-                <div class="lesson-number">
-                  <i class="bx bx-book-open">&nbsp;</i>
-                  <span>10 Lessons</span>
-                </div>
-                <div class="lesson-time">
-                  <i class="bx bx-time">&nbsp;</i>
-                  <span>10 hours</span>
-                </div>
-              </div>
-              <div class="progress-container">
-                <div class="progress progress-height">
-                  <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                    style="width: 50%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
-                    aria-valuemax="100"></div>
-                </div>
-                <span>{{ SEDbar }}</span>
-              </div>
-            </div>
-          </div> -->
         </div>
       </div>
     </div>
@@ -249,8 +59,8 @@ export default {
   },
   mounted() {
     // Get the element
-    //const SEDbar = document.getElementById("SEDbar").style.width;
-    //this.SEDbar = SEDbar;
+    //const SEDbar = document.getElementById("SEDbar");
+    //this.SEDbar = SEDbar.style.width;
     this.fetchCourseId();
   },
   methods: {
@@ -277,7 +87,7 @@ export default {
         this.time = jsonData.map(item => item.time);
         this.course_img = jsonData.map(item => item.course_img);
         this.lessons = jsonData.map(item => item.games.length);
-        
+
 
         console.log(this.course_id);
         console.log(this.course_name);

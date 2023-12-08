@@ -1,7 +1,3 @@
-<script setup>
-import Button from 'primevue/button';
-</script>
-
 <template>
     <div class="flex-container">
         <side />
@@ -16,11 +12,12 @@ import Button from 'primevue/button';
                 </router-link>
             </div>
             <div class="container course-container">
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-4">
-                    <router-link to="/Courses/Games" style="text-decoration: none; color: inherit;">
+                <div class="row row-cols-1">
+                    <router-link v-for="game in game_id" :to="`/Courses/Games/${course_id[0]}/${game}`"
+                        style="text-decoration: none; color: inherit;">
                         <div class="col">
                             <div class="p-4 course-square">
-                                <img src="src/assets/img/tragicomedy.png" class="course-logo" />
+                                <img src="../../src/assets/img/tragicomedy.png" class="course-logo" />
                                 <h6>Game 1</h6>
                                 <div class="lesson-container">
                                     <div class="lesson-number">
@@ -48,6 +45,61 @@ import Button from 'primevue/button';
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    data() {
+        return {
+            SEDbar: "",
+            game_id: [],
+            gameName: [],
+            course_id: [],
+        };
+    },
+    mounted() {
+        // Get the element
+        //const SEDbar = document.getElementById("SEDbar");
+        //this.SEDbar = SEDbar.style.width;
+        this.fetchCourseId();
+    },
+    methods: {
+        async fetchCourseId() {
+            try {
+                const token = localStorage.getItem("user");
+                const response = await fetch("/api/Courses", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        // Include the token in the Authorization header
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+                const jsonData = await response.json();
+                // get jsonData course_id is "SE001" equal the URL :id
+                const course_info = jsonData.filter((course) => course.course_id === this.$route.params.id);
+
+                this.course_id = course_info.map((course) => course.course_id);
+                // get the game object related the course_id
+                const game = course_info[0].games;
+
+                this.game_id = game.map((game) => game.game_id);
+                this.gameName = game.map((game) => game.gameName);
+
+                console.log(this.course_id);
+                console.log(this.game_id);
+                console.log(this.gameName);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        },
+    }
+};
+</script>
 
 <style>
 .flex-container {
@@ -83,5 +135,9 @@ import Button from 'primevue/button';
     margin: 0 auto;
     max-width: 95%;
     padding: 0 0;
+}
+
+.col {
+    padding-bottom: 30px;
 }
 </style>

@@ -9,7 +9,7 @@
     </button>
     <div class="dropdown" @click="toggleDropdown">
       <button class="dropbtn">
-        <img src="src/assets/img/dog.png" alt="Avatar" class="avatar" />
+        <img src="../../src/assets/img/dog.png" alt="Avatar" class="avatar" />
       </button>
       <div class="dropdown-content" v-show="isOpen">
         <a href="#" style="margin-top: 5px;"><i class="bi bi-person"></i> &nbsp; Profile</a>
@@ -39,7 +39,7 @@ export default {
       } else if (currentPath === "/courses") {
         return "Courses";
       } else if (currentPath.startsWith("/Courses/Games")) {
-        return "Courses / Games";
+        return "Courses/Games";
       }
     },
   },
