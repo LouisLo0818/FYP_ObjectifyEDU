@@ -15,7 +15,7 @@
                 <div class="row row-cols-1">
                     <router-link v-for="game in game_id" :to="`/Courses/Games/${course_id[0]}/${game}`"
                         style="text-decoration: none; color: inherit;">
-                        <div class="col">
+                        <div class="col" style="padding-bottom: 30px;">
                             <div class="p-4 course-square">
                                 <img src="../../src/assets/img/tragicomedy.png" class="course-logo" />
                                 <h6>Game 1</h6>
@@ -135,9 +135,5 @@ export default {
     margin: 0 auto;
     max-width: 95%;
     padding: 0 0;
-}
-
-.col {
-    padding-bottom: 30px;
 }
 </style>
