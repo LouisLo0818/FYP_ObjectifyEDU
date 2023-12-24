@@ -1,8 +1,8 @@
 <template>
   <div class="nav-container">
     <nav>
-      <a href="#" style="text-decoration: none; display: inline; margin-left: 20px;">Home</a>
-      <h6 style="display: inline">&nbsp;/ {{ pageTitle }}</h6>
+      <router-link to="/Dashboard" style="text-decoration: none; display: inline; margin-left: 20px;">Home</router-link>
+      <h6 style="display: inline;">&nbsp;/ {{ pageTitle }}</h6>
     </nav>
     <button class="menu-button" style="margin-right: 10px;" @click="toggleSidebar">
       <i class="bi bi-list" style="font-size: 24px;"></i>
@@ -39,7 +39,7 @@ export default {
       } else if (currentPath === "/courses") {
         return "Courses";
       } else if (currentPath.startsWith("/Courses/Games")) {
-        return "Courses/Games";
+        return "Courses / Games";
       }
     },
   },

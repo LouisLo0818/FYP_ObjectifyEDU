@@ -88,7 +88,6 @@ export default {
         this.course_img = jsonData.map(item => item.course_img);
         this.lessons = jsonData.map(item => item.games.length);
 
-
         console.log(this.course_id);
         console.log(this.course_name);
         console.log(this.time);

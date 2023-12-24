@@ -13,13 +13,13 @@
             </div>
             <div class="container course-container">
                 <div class="row row-cols-1">
-                    <router-link v-for="game in game_id" :to="`/Courses/Games/${course_id[0]}/${game}`"
+                    <router-link v-for="(id, index) in game_id" :to="`/Courses/Games/${course_id[0]}/${id}`"
                         style="text-decoration: none; color: inherit;">
                         <div class="col" style="padding-bottom: 30px;">
                             <div class="p-4 course-square">
                                 <img src="../../src/assets/img/tragicomedy.png" class="course-logo" />
-                                <h6>Game 1</h6>
-                                <div class="lesson-container">
+                                <h6 style="padding-top: 10px;">{{ gameName[index] }}</h6>
+                                <div class="lesson-container" style="padding-top: 10px;">
                                     <div class="lesson-number">
                                         <i class="bx bx-book-open">&nbsp;</i>
                                         <span>10 Lessons</span>
@@ -54,6 +54,7 @@ export default {
             game_id: [],
             gameName: [],
             course_id: [],
+            course_img: [],
         };
     },
     mounted() {
