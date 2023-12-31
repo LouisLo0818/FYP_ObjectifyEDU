@@ -9,6 +9,10 @@
   },
   "dependencies": {
     "@fortawesome/vue-fontawesome": "^3.0.3",
+    "@mediapipe/camera_utils": "^0.3.1675466862",
+    "@mediapipe/drawing_utils": "^0.3.1675466124",
+    "@mediapipe/hands": "^0.4.1675469240",
+    "@mediapipe/tasks-vision": "^0.10.9",
     "axios": "^1.6.2",
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.11.1",
