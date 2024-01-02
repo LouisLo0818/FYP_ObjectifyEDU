@@ -1,7 +1,27 @@
 <template>
-  <div class="container">
+  <div class="container" style="margin-left: 10px;">
+    <nav class="navbar">
+      <div class="logo">
+        <img src="path-to-your-logo.png" alt="webio logo" />
+      </div>
+      <div class="nav-title">Engagement & Nurture Marketing Str...</div>
+      <div class="nav-icons">
+        <button class="icon-button">
+          <i class="icon-bell"></i> <!-- Replace with actual icon -->
+        </button>
+        <button class="icon-button">
+          <i class="icon-settings"></i> <!-- Replace with actual icon -->
+        </button>
+        <button class="icon-button">
+          <i class="icon-dots"></i> <!-- Replace with actual icon -->
+        </button>
+      </div>
+      <div class="nav-action">
+        <button class="action-button">Finish the lesson</button>
+      </div>
+    </nav>
     <video ref="videoElement" class="input_video"></video>
-    <canvas ref="canvasElement" class="output_canvas" width="500" height="500" style="border-radius: 30px;"></canvas>
+    <canvas ref="canvasElement" class="output_canvas" width="1000" height="500" style="border-radius: 20px;"></canvas>
     <h1>{{ totalFingerCount }}</h1>
     <h1>{{ handCount }}</h1>
   </div>
@@ -51,8 +71,8 @@ export default {
         onFrame: async () => {
           await hands.send({ image: videoElement });
         },
-        width: 500,
-        height: 500
+        width: 1500,
+        height: 1000
       });
       camera.start();
     },
@@ -111,7 +131,61 @@ export default {
 </script>
 
 <style>
+html,
+body {
+  background-color: #f5f5f9;
+}
+
 .input_video {
   display: none;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  background-color: #f5f5f9;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 90%;
+}
+
+.logo img {
+  height: 40px;
+  /* Adjust size as needed */
+}
+
+.nav-title {
+  flex-grow: 1;
+  margin-left: 20px;
+  font-weight: bold;
+  /* Truncate long titles */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-icons {
+  display: flex;
+  align-items: center;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin: 0 5px;
+  font-size: 20px;
+  /* Adjust size as needed */
+}
+
+.action-button {
+  background-color: #007bff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
 }
 </style>
