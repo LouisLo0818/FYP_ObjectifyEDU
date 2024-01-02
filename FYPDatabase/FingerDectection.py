@@ -58,6 +58,7 @@ def get_frame():
 
                     # Other fingers: TIP y position must be lower than PIP y position,
                     #   as image origin is in the upper left corner.
+                        
                     if handLandmarks[8][1] < handLandmarks[6][1]:  # Index finger
                         fingerCount = fingerCount+1
                     if handLandmarks[12][1] < handLandmarks[10][1]:  # Middle finger
