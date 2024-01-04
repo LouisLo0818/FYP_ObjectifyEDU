@@ -1,29 +1,39 @@
 <template>
-  <div class="container" style="margin-left: 10px;">
-    <nav class="navbar">
-      <div class="logo">
-        <img src="path-to-your-logo.png" alt="webio logo" />
+  <div class="container" style="padding: 10px 20px; margin: 0; max-width: 100vw; max-height: 100vh;">
+    <div class="row">
+      <div class="col-9">
+        <nav class="navbar">
+          <div class="logo">
+            <img src="path-to-your-logo.png" alt="webio logo" />
+          </div>
+          <div class="nav-title">? + 5 = 10</div>
+          <div class="nav-icons">
+            <button class="icon-button">
+              <i class="icon-bell"></i> <!-- Replace with actual icon -->
+            </button>
+            <button class="icon-button">
+              <i class="icon-settings"></i> <!-- Replace with actual icon -->
+            </button>
+            <button class="icon-button">
+              <i class="icon-dots"></i> <!-- Replace with actual icon -->
+            </button>
+          </div>
+          <div class="nav-action">
+            <button class="action-button">Finish the lesson</button>
+          </div>
+        </nav>
+        <div class="progress">
+          <div class="progress-bar" role="progressbar" :style="{ width: progressBarWidth + '%' }" aria-valuenow="100"
+            aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <video ref="videoElement" class="input_video"></video>
+        <canvas ref="canvasElement" class="output_canvas" width="1680" height="1050"></canvas>
+        <h1>{{ totalFingerCount }}</h1>
+        <h1>{{ handCount }}</h1>
       </div>
-      <div class="nav-title">Engagement & Nurture Marketing Str...</div>
-      <div class="nav-icons">
-        <button class="icon-button">
-          <i class="icon-bell"></i> <!-- Replace with actual icon -->
-        </button>
-        <button class="icon-button">
-          <i class="icon-settings"></i> <!-- Replace with actual icon -->
-        </button>
-        <button class="icon-button">
-          <i class="icon-dots"></i> <!-- Replace with actual icon -->
-        </button>
+      <div class="col" style="margin: 20px;border-radius: 20px; border: 1px solid;max-height: 100%;height: 90vh;">asd
       </div>
-      <div class="nav-action">
-        <button class="action-button">Finish the lesson</button>
-      </div>
-    </nav>
-    <video ref="videoElement" class="input_video"></video>
-    <canvas ref="canvasElement" class="output_canvas" width="1000" height="500" style="border-radius: 20px;"></canvas>
-    <h1>{{ totalFingerCount }}</h1>
-    <h1>{{ handCount }}</h1>
+    </div>
   </div>
 </template>
 
@@ -37,6 +47,9 @@ export default {
     return {
       handsData: [],
       handCount: 0,
+      progressBarWidth: 100,
+      interval: null,
+      answer: 5
     };
   },
   computed: {
@@ -46,6 +59,30 @@ export default {
   },
   mounted() {
     this.initializeMediaPipe();
+    const startTime = Date.now();
+    const duration = 5000; // 5 seconds
+
+    this.interval = setInterval(() => {
+      const elapsedTime = Date.now() - startTime;
+      this.progressBarWidth = 100 - (elapsedTime / duration) * 100;
+
+      if (elapsedTime >= duration) {
+        clearInterval(this.interval);
+        this.progressBarWidth = 0;
+        // show alert box
+        if (this.totalFingerCount !== this.answer) {
+          alert("Wrong! Your answer is " + this.totalFingerCount);
+          window.location.reload();
+        } else {
+          alert("Correct! Your answer is " + this.totalFingerCount);
+          window.location.reload();
+        }
+      }
+    }, 1); // Update every 100ms for a smoother animation
+  },
+  beforeDestroy() {
+    // Clear the interval when the component is destroyed
+    clearInterval(this.interval);
   },
   methods: {
     initializeMediaPipe() {
@@ -71,8 +108,8 @@ export default {
         onFrame: async () => {
           await hands.send({ image: videoElement });
         },
-        width: 1500,
-        height: 1000
+        width: 1680,
+        height: 1050
       });
       camera.start();
     },
@@ -92,7 +129,7 @@ export default {
 
       results.multiHandLandmarks.forEach(landmarks => {
         drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 5 });
-        drawLandmarks(canvasCtx, landmarks, { color: '#FF0000', lineWidth: 2 });
+        drawLandmarks(canvasCtx, landmarks, { color: '#FF0000', lineWidth: 5 });
       });
 
       canvasCtx.restore();
@@ -140,13 +177,18 @@ body {
   display: none;
 }
 
+.output_canvas {
+  border-radius: 20px;
+  width: 100%;
+  height: 70vh;
+}
+
 .navbar {
   display: flex;
   align-items: center;
   background-color: #f5f5f9;
-  padding: 10px 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 90%;
+  width: 100%;
+  height: 80px;
 }
 
 .logo img {
@@ -162,6 +204,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: black;
 }
 
 .nav-icons {
@@ -183,9 +226,10 @@ body {
   background-color: #007bff;
   border: none;
   padding: 10px 20px;
-  border-radius: 20px;
+  border-radius: 15px;
   color: white;
   font-size: 16px;
   cursor: pointer;
+  float: right;
 }
 </style>
