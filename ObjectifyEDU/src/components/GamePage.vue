@@ -19,7 +19,7 @@
             </button>
           </div>
           <div class="nav-action">
-            <button class="action-button">Finish the lesson</button>
+            <button class="action-button" @click="finishLesson">Finish the lesson</button>
           </div>
         </nav>
         <div class="progress">
@@ -162,6 +162,23 @@ export default {
     },
     determineHandType(landmarks) {
       return landmarks[0].x < landmarks[9].x ? 'Left' : 'Right';
+    },
+    finishLesson() {
+      // Stop the camera stream
+      if (this.$refs.videoElement && this.$refs.videoElement.srcObject) {
+        const stream = this.$refs.videoElement.srcObject;
+        const tracks = stream.getTracks();
+
+        tracks.forEach(track => {
+          track.stop();
+        });
+
+        // Reset the video element's source object
+        this.$refs.videoElement.srcObject = null;
+      }
+
+      // Navigate to the previous page
+      this.$router.go(-1);
     }
   }
 };
