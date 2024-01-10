@@ -1,8 +1,8 @@
 <template>
   <div class=" gamePageContainer">
-    <div class="container" style="height: 100vh;">
-      <div class="row" style="height: 100%;">
-        <div class="col-9">
+    <div class="container" style="height: 100%;">
+      <div class="row" style="padding: 1% 1% 1% 1%;height: 100%;">
+        <div class="col-9" style="padding: 0;">
           <nav class="navbar">
             <div class="logo">
               <img src="path-to-your-logo.png" alt="webio logo" />
@@ -28,7 +28,7 @@
               aria-valuemin="0" aria-valuemax="100"></div>
           </div>
           <video ref="videoElement" class="input_video"></video>
-          <canvas ref="canvasElement" class="output_canvas" width="1680" height="1050"></canvas>
+          <canvas ref="canvasElement" class="output_canvas" width="1920" height="1080"></canvas>
           <h1>{{ totalFingerCount }}</h1>
           <h1>{{ handCount }}</h1>
         </div>
@@ -276,16 +276,16 @@ export default {
 .output_canvas {
   border-radius: 20px;
   width: 100%;
-  height: 100vh;
+  height: 70vh;
 }
 
 .navbar {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   background-color: #f5f5f9;
   width: 100%;
   height: 80px;
-  padding-top: 10px;
+  padding: 0;
 }
 
 .logo img {
@@ -336,7 +336,7 @@ export default {
   max-height: 100%;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   padding: 20px;
-  margin:  0 20px 0 20px;
+  margin:  0 0 0 2vw;
 }
 
 .question-list {
