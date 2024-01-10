@@ -1,37 +1,46 @@
 <template>
-  <div class="container" style="padding: 10px 20px; margin: 0; max-width: 100vw; max-height: 100vh;">
-    <div class="row">
-      <div class="col-9">
-        <nav class="navbar">
-          <div class="logo">
-            <img src="path-to-your-logo.png" alt="webio logo" />
+  <div class=" gamePageContainer">
+    <div class="container" style="height: 100vh;">
+      <div class="row" style="height: 100%;">
+        <div class="col-9">
+          <nav class="navbar">
+            <div class="logo">
+              <img src="path-to-your-logo.png" alt="webio logo" />
+            </div>
+            <div class="nav-title">? + 5 = 10</div>
+            <div class="nav-icons">
+              <button class="icon-button">
+                <i class="icon-bell"></i> <!-- Replace with actual icon -->
+              </button>
+              <button class="icon-button">
+                <i class="icon-settings"></i> <!-- Replace with actual icon -->
+              </button>
+              <button class="icon-button">
+                <i class="icon-dots"></i> <!-- Replace with actual icon -->
+              </button>
+            </div>
+            <div class="nav-action">
+              <button class="action-button" @click="finishLesson">Finish the lesson</button>
+            </div>
+          </nav>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" :style="{ width: progressBarWidth + '%' }" aria-valuenow="100"
+              aria-valuemin="0" aria-valuemax="100"></div>
           </div>
-          <div class="nav-title">? + 5 = 10</div>
-          <div class="nav-icons">
-            <button class="icon-button">
-              <i class="icon-bell"></i> <!-- Replace with actual icon -->
-            </button>
-            <button class="icon-button">
-              <i class="icon-settings"></i> <!-- Replace with actual icon -->
-            </button>
-            <button class="icon-button">
-              <i class="icon-dots"></i> <!-- Replace with actual icon -->
-            </button>
-          </div>
-          <div class="nav-action">
-            <button class="action-button" @click="finishLesson">Finish the lesson</button>
-          </div>
-        </nav>
-        <div class="progress">
-          <div class="progress-bar" role="progressbar" :style="{ width: progressBarWidth + '%' }" aria-valuenow="100"
-            aria-valuemin="0" aria-valuemax="100"></div>
+          <video ref="videoElement" class="input_video"></video>
+          <canvas ref="canvasElement" class="output_canvas" width="1680" height="1050"></canvas>
+          <h1>{{ totalFingerCount }}</h1>
+          <h1>{{ handCount }}</h1>
         </div>
-        <video ref="videoElement" class="input_video"></video>
-        <canvas ref="canvasElement" class="output_canvas" width="1680" height="1050"></canvas>
-        <h1>{{ totalFingerCount }}</h1>
-        <h1>{{ handCount }}</h1>
-      </div>
-      <div class="col" style="margin: 20px;border-radius: 20px; border: 1px solid;max-height: 100%;height: 90vh;">asd
+        <div class="col course-content">
+          <h5 style="padding: 10px 0 20px 0;">{{ gameName }}</h5>
+          <ul class="question-list">
+            <li v-for="(question, index) in questions" :key="question.question_id" class="question-item">
+              <span class="question-number">0{{ index + 1 }}</span>
+              <span class="question-text">{{ question.questionText }}</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -49,7 +58,14 @@ export default {
       handCount: 0,
       progressBarWidth: 100,
       interval: null,
-      answer: 5
+      answer: 5,
+      game_id: [],
+      gameName: [],
+      // question_id: [],
+      // questionText: [],
+      // options: [],
+      // correctOption: [],
+      questions: []
     };
   },
   computed: {
@@ -59,26 +75,27 @@ export default {
   },
   mounted() {
     this.initializeMediaPipe();
-    const startTime = Date.now();
-    const duration = 5000; // 5 seconds
+    this.fetchGameInfo();
+    // const startTime = Date.now();
+    // const duration = 5000; // 5 seconds
 
-    this.interval = setInterval(() => {
-      const elapsedTime = Date.now() - startTime;
-      this.progressBarWidth = 100 - (elapsedTime / duration) * 100;
+    // this.interval = setInterval(() => {
+    //   const elapsedTime = Date.now() - startTime;
+    //   this.progressBarWidth = 100 - (elapsedTime / duration) * 100;
 
-      if (elapsedTime >= duration) {
-        clearInterval(this.interval);
-        this.progressBarWidth = 0;
-        // show alert box
-        if (this.totalFingerCount !== this.answer) {
-          alert("Wrong! Your answer is " + this.totalFingerCount);
-          window.location.reload();
-        } else {
-          alert("Correct! Your answer is " + this.totalFingerCount);
-          window.location.reload();
-        }
-      }
-    }, 1); // Update every 100ms for a smoother animation
+    //   if (elapsedTime >= duration) {
+    //     clearInterval(this.interval);
+    //     this.progressBarWidth = 0;
+    //     // show alert box
+    //     if (this.totalFingerCount !== this.answer) {
+    //       alert("Wrong! Your answer is " + this.totalFingerCount);
+    //       window.location.reload();
+    //     } else {
+    //       alert("Correct! Your answer is " + this.totalFingerCount);
+    //       window.location.reload();
+    //     }
+    //   }
+    // }, 1); // Update every 100ms for a smoother animation
   },
   beforeDestroy() {
     // Clear the interval when the component is destroyed
@@ -179,15 +196,77 @@ export default {
 
       // Navigate to the previous page
       this.$router.go(-1);
-    }
+    },
+    async fetchGameInfo() {
+      try {
+        const token = localStorage.getItem("user");
+        const response = await fetch("/api/Courses", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const jsonData = await response.json();
+
+        const courseId = this.$route.params.id; // Adjust the param key based on your route setup
+        const courseInfo = jsonData.find(course => course.course_id === courseId);
+
+        if (!courseInfo) {
+          console.error("Course not found");
+          return;
+        }
+
+        // Now filter the games array within the course
+        const gameInfo = courseInfo.games.find(game => game.game_id === this.$route.params.gameId);
+
+        if (!gameInfo) {
+          console.error("Game not found");
+          return;
+        }
+
+        this.game_id = gameInfo.game_id;
+        this.gameName = gameInfo.gameName;
+        this.questions = gameInfo.questions;
+
+        // this.question_id = questionInfo.map((question) => question.question_id);
+        // this.questionText = questionInfo.map((question) => question.questionText);
+        // this.options = questionInfo.map((question) => question.options);
+        // this.correctOption = questionInfo.map((question) => question.correctOption);
+
+        // console.log(this.question_id);
+        // console.log(this.questionText);
+        // console.log(this.options);
+        // console.log(this.correctOption);
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
   }
 };
 </script>
 
-<style>
-html,
-body {
-  background-color: #f5f5f9;
+<style scoped>
+.gamePageContainer {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  /* Prevent scrolling on the whole page */
+}
+
+.container {
+  max-height: 100%;
+  max-width: 100%;
+  padding: 20px 20px;
 }
 
 .input_video {
@@ -197,7 +276,7 @@ body {
 .output_canvas {
   border-radius: 20px;
   width: 100%;
-  height: 70vh;
+  height: 100vh;
 }
 
 .navbar {
@@ -206,6 +285,7 @@ body {
   background-color: #f5f5f9;
   width: 100%;
   height: 80px;
+  padding-top: 10px;
 }
 
 .logo img {
@@ -248,5 +328,32 @@ body {
   font-size: 16px;
   cursor: pointer;
   float: right;
+}
+
+.course-content {
+  background-color: #1d1d1d;
+  border-radius: 20px;
+  max-height: 100%;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  padding: 20px;
+  margin:  0 20px 0 20px;
+}
+
+.question-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.question-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  /* Space between items */
+}
+
+.question-number {
+  font-weight: bold;
+  margin-right: 10px;
+  /* Space after the number */
 }
 </style>
