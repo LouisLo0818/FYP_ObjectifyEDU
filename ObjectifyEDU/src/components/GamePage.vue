@@ -1,11 +1,11 @@
 <template>
-  <div class=" gamePageContainer">
+  <div class="gamePageContainer">
     <div class="container" style="height: 100%;">
       <div class="row" style="padding: 1% 1% 1% 1%;height: 100%;">
         <div class="col-9" style="padding: 0;">
           <nav class="navbar">
             <div class="logo">
-              <img src="path-to-your-logo.png" alt="webio logo" />
+              <img src="../../src/assets/img/dog.png" alt="webio logo" />
             </div>
             <div class="nav-title">? + 5 = 10</div>
             <div class="nav-icons">
@@ -254,6 +254,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 .gamePageContainer {
   height: 100vh;
   width: 100vw;
@@ -261,6 +263,7 @@ export default {
   padding: 0;
   overflow-x: hidden;
   /* Prevent scrolling on the whole page */
+  background-color: #f5f5f9;
 }
 
 .container {
@@ -276,21 +279,30 @@ export default {
 .output_canvas {
   border-radius: 20px;
   width: 100%;
-  height: 70vh;
+  height: 65vh;
 }
 
 .navbar {
   display: flex;
-  align-items: baseline;
+  align-self: flex-start;
   background-color: #f5f5f9;
   width: 100%;
-  height: 80px;
   padding: 0;
 }
 
 .logo img {
-  height: 40px;
+  height: 50px;
   /* Adjust size as needed */
+}
+
+.logo {
+  display: flex;
+  align-self: flex-start;
+}
+
+.nav-action {
+  display: flex;
+  align-self: flex-start;
 }
 
 .nav-title {
@@ -320,23 +332,29 @@ export default {
 }
 
 .action-button {
-  background-color: #007bff;
+  background-color: #5753ea;
   border: none;
-  padding: 10px 20px;
+  padding: 10px 10px;
   border-radius: 15px;
   color: white;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   float: right;
+  width: 170px;
+  height: 50px;
+}
+
+.progress {
+  margin-top: 20px;
 }
 
 .course-content {
-  background-color: #1d1d1d;
+  background-color: #ffffff;
   border-radius: 20px;
   max-height: 100%;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   padding: 20px;
-  margin:  0 0 0 2vw;
+  margin: 0 0 0 20px;
 }
 
 .question-list {
@@ -348,7 +366,16 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  /* Space between items */
+  height: 40px;
+  transition: background-color 0.3s;
+  /* Add border-radius to the transition */
+  border-radius: 10px;
+  /* Adjust the border-radius as needed */
+}
+
+.question-item:hover {
+  background-color: #e0e0e0;
+  /* Change to your desired hover background color */
 }
 
 .question-number {
