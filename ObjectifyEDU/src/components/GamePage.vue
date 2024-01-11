@@ -2,12 +2,12 @@
   <div class="gamePageContainer">
     <div class="container" style="height: 100%;">
       <div class="row" style="padding: 1% 1% 1% 1%;height: 100%;">
-        <div class="col-9" style="padding: 0;">
+        <div class="col-9" style="padding: 0;width: 70%;margin-right: 20px;">
           <nav class="navbar">
             <div class="logo">
               <img src="../../src/assets/img/dog.png" alt="webio logo" />
             </div>
-            <div class="nav-title">? + 5 = 10</div>
+            <div class="nav-title">{{ questionText }}</div>
             <div class="nav-icons">
               <button class="icon-button">
                 <i class="icon-bell"></i> <!-- Replace with actual icon -->
@@ -35,7 +35,8 @@
         <div class="col course-content">
           <h5 style="padding: 10px 0 20px 0;">{{ gameName }}</h5>
           <ul class="question-list">
-            <li v-for="(question, index) in questions" :key="question.question_id" class="question-item">
+            <li v-for="(question, index) in questions" :key="question.question_id" class="question-item"
+              :class="{ 'clicked': clickedIndex === index }" @click="handleClick(question.question_id)">
               <span class="question-number">0{{ index + 1 }}</span>
               <span class="question-text">{{ question.questionText }}</span>
             </li>
@@ -62,10 +63,11 @@ export default {
       game_id: [],
       gameName: [],
       // question_id: [],
-      // questionText: [],
+      questionText: '',
       // options: [],
       // correctOption: [],
-      questions: []
+      questions: [],
+      clickedIndex: 0 // To store the index of the clicked question
     };
   },
   computed: {
@@ -236,7 +238,7 @@ export default {
         this.questions = gameInfo.questions;
 
         // this.question_id = questionInfo.map((question) => question.question_id);
-        // this.questionText = questionInfo.map((question) => question.questionText);
+        // this.questionText = questionInfo.map((question) => question[0].questionText);
         // this.options = questionInfo.map((question) => question.options);
         // this.correctOption = questionInfo.map((question) => question.correctOption);
 
@@ -249,7 +251,27 @@ export default {
         console.error("Error fetching data:", error);
       }
     },
-  }
+    handleClick(questionId) {
+      console.log("Clicked question ID:", questionId);
+      // You can also set the clickedIndex if you need to use it for other purposes
+      this.clickedIndex = this.questions.findIndex(question => question.question_id === questionId);
+
+      // If the question is found (clickedIndex is not -1)
+      if (this.clickedIndex !== -1) {
+        // Set the questionText from the clicked question
+        this.questionText = this.questions[this.clickedIndex].questionText;
+      }
+    },
+  },
+  // If your questions data comes from an asynchronous source (like an API), 
+  // you can use a watcher to update questionText when questions changes:
+  watch: {
+    questions(newQuestions) {
+      if (newQuestions.length > 0) {
+        this.questionText = newQuestions[0].questionText;
+      }
+    }
+  },
 };
 </script>
 
@@ -354,7 +376,7 @@ export default {
   max-height: 100%;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   padding: 20px;
-  margin: 0 0 0 20px;
+  width: 20rem;
 }
 
 .question-list {
@@ -366,21 +388,66 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  height: 40px;
+  height: 50px;
   transition: background-color 0.3s;
   /* Add border-radius to the transition */
   border-radius: 10px;
   /* Adjust the border-radius as needed */
+  padding: 10px;
+  overflow: hidden;
+  /* Ensure the overflow content is hidden */
+  position: relative;
+  /* Needed for absolute positioning of the fade effect */
 }
+
+.question-text {
+  white-space: nowrap;
+  /* Prevent text from wrapping to the next line */
+  overflow: hidden;
+  /* Hide overflow text */
+  text-overflow: ellipsis;
+  /* Add an ellipsis to overflow text */
+  display: block;
+  /* Block display to fill the width */
+  max-width: calc(100% - 30px);
+  /* Adjust the width as needed, accounting for other elements like question-number */
+}
+
 
 .question-item:hover {
   background-color: #e0e0e0;
   /* Change to your desired hover background color */
 }
 
+.question-item.clicked {
+  background-color: #e0e0e0;
+  /* Background color for clicked item */
+  pointer-events: none;
+  /* Optional: disable further interactions */
+}
+
+.question-item::after {
+  content: '';
+  width: 30%;
+  /* Cover the full width of the .question-item */
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 40%, rgb(255, 255, 255) 100%);
+  /* Gradient fade effect */
+}
+
+.question-item.clicked::after {
+  /* Only change what is different when clicked */
+  background-color: #e0e0e0;
+  width: 0%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 0%);
+}
+
 .question-number {
-  font-weight: bold;
-  margin-right: 10px;
+  margin-right: 20px;
+  font-size: 30px;
   /* Space after the number */
 }
 </style>
