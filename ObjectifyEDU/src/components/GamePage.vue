@@ -3,12 +3,20 @@
     <div class="container" style="height: 100%;">
       <div class="row" style="padding: 1% 1% 1% 1%;height: 100%;">
         <div class="col-9" style="padding: 0;width: 70%;margin-right: 20px;">
-          <nav class="navbar">
-            <div class="logo">
-              <img src="../../src/assets/img/dog.png" alt="webio logo" />
+          <div class="question-content d-flex align-items-center justify-content-between">
+            <!-- Logo -->
+            <div class="logo d-flex align-items-center">
+              <img src="../../src/assets/img/dog.png" alt="webio logo" style="height: 50px;">
+              <!-- Adjust height as needed -->
             </div>
-            <div class="nav-title">{{ questionText }}</div>
-            <div class="nav-icons">
+
+            <!-- Question Text -->
+            <div class="nav-title flex-grow-1 mx-3">
+              {{ questionText }}
+            </div>
+
+            <!-- Icons -->
+            <div class="nav-icons d-flex align-items-center">
               <button class="icon-button">
                 <i class="icon-bell"></i> <!-- Replace with actual icon -->
               </button>
@@ -19,18 +27,28 @@
                 <i class="icon-dots"></i> <!-- Replace with actual icon -->
               </button>
             </div>
+
+            <!-- Action Button -->
             <div class="nav-action">
               <button class="action-button" @click="finishLesson">Finish the lesson</button>
             </div>
-          </nav>
-          <div class="progress">
-            <div class="progress-bar" role="progressbar" :style="{ width: progressBarWidth + '%' }" aria-valuenow="100"
-              aria-valuemin="0" aria-valuemax="100"></div>
           </div>
-          <video ref="videoElement" class="input_video"></video>
-          <canvas ref="canvasElement" class="output_canvas" width="1920" height="1080"></canvas>
-          <h1>{{ totalFingerCount }}</h1>
-          <h1>{{ handCount }}</h1>
+          <div class="video-container" ref="videoContainer">
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" :style="{ width: progressBarWidth + '%' }" aria-valuenow="100"
+                aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <video ref="videoElement" class="input_video"></video>
+            <canvas ref="canvasElement" class="output_canvas" :width="videoWidth" :height="videoHeight"></canvas>
+          </div>
+          <div class="answer-container">
+            <button class="answer-button">A</button>
+            <button class="answer-button">B</button>
+            <button class="answer-button">C</button>
+            <button class="answer-button">D</button>
+          </div>
+          <!-- <h1>{{ totalFingerCount }}</h1>
+          <h1>{{ handCount }}</h1> -->
         </div>
         <div class="col course-content">
           <h5 style="padding: 10px 0 20px 0;">{{ gameName }}</h5>
@@ -67,7 +85,9 @@ export default {
       // options: [],
       // correctOption: [],
       questions: [],
-      clickedIndex: 0 // To store the index of the clicked question
+      clickedIndex: 0, // To store the index of the clicked question,
+      videoWidth: 1920,
+      videoHeight: 1080,
     };
   },
   computed: {
@@ -78,6 +98,12 @@ export default {
   mounted() {
     this.initializeMediaPipe();
     this.fetchGameInfo();
+    // Call the method to set the initial size based on the current container width
+    this.setCanvasSize();
+    // Add event listener to call setCanvasSize on window resize
+    window.addEventListener('resize', this.setCanvasSize);
+    this.setCanvasContainer();
+    window.addEventListener('resize', this.setCanvasContainer);
     // const startTime = Date.now();
     // const duration = 5000; // 5 seconds
 
@@ -102,6 +128,8 @@ export default {
   beforeDestroy() {
     // Clear the interval when the component is destroyed
     clearInterval(this.interval);
+    window.removeEventListener('resize', this.setCanvasSize);
+    window.removeEventListener('resize', this.setCanvasContainer);
   },
   methods: {
     initializeMediaPipe() {
@@ -262,7 +290,46 @@ export default {
         this.questionText = this.questions[this.clickedIndex].questionText;
       }
     },
+
+    //----------------------------------------------- For UI layout -----------------------------------------------//
+
+    setCanvasSize() {
+      // Get the width of the video-container, which is the width you want your canvas to match
+      const containerWidth = this.$refs.videoContainer.clientWidth;
+      // Maintain the 16:9 aspect ratio (or whatever ratio you need)
+      const aspectRatio = 9 / 16;
+      // Calculate the height based on the width and aspect ratio
+      const newHeight = containerWidth * aspectRatio;
+
+      // Update the data properties
+      this.videoWidth = containerWidth;
+      this.videoHeight = newHeight;
+    },
+    setCanvasContainer() {
+      const deivce_scale = window.devicePixelRatio // get the scale and layout from PC setting
+      const screenWidth = screen.width * deivce_scale // actual screen size
+      const canvas_container = document.querySelector(".video-container");
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera; // get device is PC or iPad
+      // For PC
+      if (!/Macintosh|iPad|iPhone|iPod/.test(userAgent)) {
+        if (screenWidth >= 1600) { // PC 1680 x 1050
+          canvas_container.style.height = "60vh";
+        }
+      } else {
+        console.log(this.screenWidth);
+        if (screen.width >= 1300 && screen.width <= 1366) { // iPad Pro size 1366 x 1024
+          canvas_container.style.height = "70vh";
+        } else if (screen.width >= 1100 && screen.width <= 1180) { // iPad Air size 1180 x 820
+          canvas_container.style.height = "65vh";
+        } else if (screen.width >= 1000 && screen.width <= 1024) { // iPad mini size 1024 x 768
+          canvas_container.style.height = "65vh";
+        }
+      }
+    }
   },
+
+  //------------------------------------------------------------------------------------------------------------//
+
   // If your questions data comes from an asynchronous source (like an API), 
   // you can use a watcher to update questionText when questions changes:
   watch: {
@@ -301,15 +368,7 @@ export default {
 .output_canvas {
   border-radius: 20px;
   width: 100%;
-  height: 65vh;
-}
-
-.navbar {
-  display: flex;
-  align-self: flex-start;
-  background-color: #f5f5f9;
-  width: 100%;
-  padding: 0;
+  height: 100%;
 }
 
 .logo img {
@@ -330,12 +389,12 @@ export default {
 .nav-title {
   flex-grow: 1;
   margin-left: 20px;
-  font-weight: bold;
   /* Truncate long titles */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   color: black;
+  font-size: 20px;
 }
 
 .nav-icons {
@@ -366,6 +425,11 @@ export default {
   height: 50px;
 }
 
+.video-container {
+  width: 100%;
+  height: 65vh;
+}
+
 .progress {
   margin-top: 20px;
 }
@@ -376,7 +440,7 @@ export default {
   max-height: 100%;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   padding: 20px;
-  width: 20rem;
+  width: 0px;
 }
 
 .question-list {
@@ -449,5 +513,34 @@ export default {
   margin-right: 20px;
   font-size: 30px;
   /* Space after the number */
+}
+
+.answer-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.answer-button {
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 15px 30px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.answer-button:hover {
+  background-color: #f0f0f0;
+}
+
+.answer-button.selected {
+  background-color: #ffa500;
+  color: white;
 }
 </style>
