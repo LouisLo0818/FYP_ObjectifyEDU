@@ -2,50 +2,56 @@
   <div class="gamePageContainer">
     <div class="container" style="height: 100%;">
       <div class="row" style="padding: 1% 1% 1% 1%;height: 100%;">
-        <div class="col-9" style="padding: 0;width: 70%;margin-right: 20px;">
-          <div class="question-content d-flex align-items-center justify-content-between">
-            <!-- Logo -->
-            <div class="logo d-flex align-items-center">
-              <img src="../../src/assets/img/dog.png" alt="webio logo" style="height: 50px;">
-              <!-- Adjust height as needed -->
-            </div>
+        <div class="col-9" style="display: flex; flex-direction: column; padding: 0; margin-right: 20px;">
+          <div class="col" style="flex: 0;">
+            <div class="question-content d-flex align-items-center justify-content-between">
+              <!-- Logo -->
+              <div class="logo d-flex align-items-center">
+                <img src="../../src/assets/img/dog.png" alt="webio logo" style="height: 50px;">
+                <!-- Adjust height as needed -->
+              </div>
 
-            <!-- Question Text -->
-            <div class="nav-title flex-grow-1 mx-3">
-              {{ questionText }}
-            </div>
+              <!-- Question Text -->
+              <div class="nav-title flex-grow-1 mx-3">
+                {{ questionText }}
+              </div>
 
-            <!-- Icons -->
-            <div class="nav-icons d-flex align-items-center">
-              <button class="icon-button">
-                <i class="icon-bell"></i> <!-- Replace with actual icon -->
-              </button>
-              <button class="icon-button">
-                <i class="icon-settings"></i> <!-- Replace with actual icon -->
-              </button>
-              <button class="icon-button">
-                <i class="icon-dots"></i> <!-- Replace with actual icon -->
-              </button>
-            </div>
+              <!-- Icons -->
+              <div class="nav-icons d-flex align-items-center">
+                <button class="icon-button">
+                  <i class="icon-bell"></i> <!-- Replace with actual icon -->
+                </button>
+                <button class="icon-button">
+                  <i class="icon-settings"></i> <!-- Replace with actual icon -->
+                </button>
+                <button class="icon-button">
+                  <i class="icon-dots"></i> <!-- Replace with actual icon -->
+                </button>
+              </div>
 
-            <!-- Action Button -->
-            <div class="nav-action">
-              <button class="action-button" @click="finishLesson">Finish the lesson</button>
+              <!-- Action Button -->
+              <div class="nav-action">
+                <button class="action-button" @click="finishLesson">Finish the lesson</button>
+              </div>
             </div>
           </div>
-          <div class="video-container" ref="videoContainer">
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" :style="{ width: progressBarWidth + '%' }" aria-valuenow="100"
-                aria-valuemin="0" aria-valuemax="100"></div>
+          <div class="col" style="padding-bottom: 30px;">
+            <div class="video-container" ref="videoContainer">
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" :style="{ width: progressBarWidth + '%' }"
+                  aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              <video ref="videoElement" class="input_video"></video>
+              <canvas ref="canvasElement" class="output_canvas" :width="videoWidth" :height="videoHeight"></canvas>
             </div>
-            <video ref="videoElement" class="input_video"></video>
-            <canvas ref="canvasElement" class="output_canvas" :width="videoWidth" :height="videoHeight"></canvas>
           </div>
-          <div class="answer-container">
-            <button class="answer-button">A</button>
-            <button class="answer-button">B</button>
-            <button class="answer-button">C</button>
-            <button class="answer-button">D</button>
+          <div class="col">
+            <div class="answer-container" style="height: 100%;">
+              <button class="answer-button">A</button>
+              <button class="answer-button">B</button>
+              <button class="answer-button">C</button>
+              <button class="answer-button">D</button>
+            </div>
           </div>
           <!-- <h1>{{ totalFingerCount }}</h1>
           <h1>{{ handCount }}</h1> -->
@@ -294,16 +300,14 @@ export default {
     //----------------------------------------------- For UI layout -----------------------------------------------//
 
     setCanvasSize() {
-      // Get the width of the video-container, which is the width you want your canvas to match
-      const containerWidth = this.$refs.videoContainer.clientWidth;
-      // Maintain the 16:9 aspect ratio (or whatever ratio you need)
-      const aspectRatio = 9 / 16;
-      // Calculate the height based on the width and aspect ratio
-      const newHeight = containerWidth * aspectRatio;
-
-      // Update the data properties
-      this.videoWidth = containerWidth;
-      this.videoHeight = newHeight;
+      const deivce_scale = window.devicePixelRatio // get the scale and layout from PC setting
+      console.log(deivce_scale)
+      const width = screen.width
+      console.log(width)
+      const height = screen.height
+      console.log(height)
+      this.videoWidth = width;
+      this.videoHeight = height;
     },
     setCanvasContainer() {
       const deivce_scale = window.devicePixelRatio // get the scale and layout from PC setting
@@ -427,7 +431,6 @@ export default {
 
 .video-container {
   width: 100%;
-  height: 65vh;
 }
 
 .progress {
@@ -441,6 +444,7 @@ export default {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   padding: 20px;
   width: 0px;
+  height: 100%;
 }
 
 .question-list {
