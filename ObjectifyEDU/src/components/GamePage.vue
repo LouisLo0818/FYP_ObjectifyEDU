@@ -1,8 +1,8 @@
 <template>
   <div class="gamePageContainer">
     <div class="container" style="height: 100%;">
-      <div class="row" style="padding: 1% 1% 1% 1%;height: 100%;">
-        <div class="col-9" style="display: flex; flex-direction: column; padding: 0; margin-right: 20px;">
+      <div class="row justify-content-center" style="height: 100%;">
+        <div class="col-8 me-4" style="display: flex; flex-direction: column; padding: 0; margin-right: 20px;">
           <div class="col" style="flex: 0;">
             <div class="question-content d-flex align-items-center justify-content-between">
               <!-- Logo -->
@@ -56,7 +56,7 @@
           <!-- <h1>{{ totalFingerCount }}</h1>
           <h1>{{ handCount }}</h1> -->
         </div>
-        <div class="col course-content">
+        <div class="col-3 course-content" >
           <h5 style="padding: 10px 0 20px 0;">{{ gameName }}</h5>
           <ul class="question-list">
             <li v-for="(question, index) in questions" :key="question.question_id" class="question-item"
@@ -362,7 +362,7 @@ export default {
 .container {
   max-height: 100%;
   max-width: 100%;
-  padding: 20px 20px;
+  padding: 20px 0px;
 }
 
 .input_video {
@@ -440,11 +440,8 @@ export default {
 .course-content {
   background-color: #ffffff;
   border-radius: 20px;
-  max-height: 100%;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   padding: 20px;
-  width: 0px;
-  height: 100%;
 }
 
 .question-list {
