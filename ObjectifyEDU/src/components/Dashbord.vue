@@ -4,10 +4,10 @@
     <div class="main">
       <navbar />
       <div class="ability-title-container">
-        <h1>Process</h1>
+        <h1 style="margin: 0;">Process</h1>
       </div>
       <div class="container" style="margin: 0 auto; max-width: 95%; padding: 0 0">
-        <div class="row gx-1 gap-4">
+        <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-4">
           <div class="col">
             <div class="p-3"
               style="background-color: #ffffff; border-radius: 8px; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;">
@@ -18,7 +18,6 @@
                     <h4 class="subject-grade" id="process1"></h4>
                   </li>
                 </ul>
-
                 <div class="subject-icon" style="background-color: #453c38">
                   <i class="bx bxs-happy-alt" style="color: #ffab00"></i>
                 </div>
@@ -67,6 +66,7 @@
               </div>
             </div>
           </div>
+
           <div class="col">
             <div class="p-3" style="
                 background-color: #ffffff;
@@ -88,9 +88,7 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="container" style="margin: 0 auto; max-width: 95%; padding: 0 0; margin-top: 30px">
-        <div class="row gx-1 gap-4">
+        <div class="row mt-1 mb-4 g-3 row-cols-1 row-cols-sm-1 row-cols-md-2">
           <div class="col">
             <div class="p-3" style="
                 background-color: #ffffff;
@@ -98,9 +96,10 @@
                 height: 300px;
                 box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
               ">
-              <h3>Activity</h3>
+              <h3 style="margin: 0;">Activity</h3>
               <div class="chart-container">
-                <bar :data="data" :options="options"></bar>
+                <!-- <bar :data="data" :options="options"></bar> -->
+                <LineChart />
               </div>
             </div>
           </div>
@@ -115,10 +114,6 @@
               <Doughnut />
             </div>
           </div>
-        </div>
-      </div>
-      <div class="container" style="max-width: 95%; padding: 0 0; margin: 30px auto 30px auto">
-        <div class="row gx-1 gap-4">
           <div class="col">
             <div class="p-3" style="
                 background-color: #ffffff;
@@ -178,46 +173,16 @@
 
 <script>
 import Doughnut from "@/components/Doughnut.vue";
-
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-} from "chart.js";
-
-import { Bar } from "vue-chartjs";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import LineChart from "@/components/LineChart.vue";
 
 export default {
   name: "App",
   components: {
-    Bar,
+    LineChart,
     Doughnut,
   },
   data() {
-    return {
-      data: {
-        labels: ["January", "February", "March"],
-        datasets: [{ data: [40, 20, 12] }],
-        process: [],
-      },
-      options: {
-        //responsive: true,
-        maintainAspectRatio: false, // Set maintainAspectRatio to false
-      },
-    };
+    return {};
   },
   mounted() {
     this.fetchData();
@@ -307,7 +272,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .chart-container {
   display: flex;
   align-items: center;
@@ -352,27 +317,6 @@ html body {
   margin-top: 40px;
 }
 
-.perinfo-container {
-  display: flex;
-  align-items: center;
-  /* Center vertically */
-  position: relative;
-  top: 0px;
-  margin: 0 auto;
-  width: 95%;
-  height: 80px;
-  border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-  flex-wrap: wrap;
-}
-
-.subject-container {
-  margin: 0 auto;
-  max-width: 95%;
-  padding: 0 0;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-}
-
 .subject {
   margin: auto 0;
   padding: 0;
@@ -393,11 +337,6 @@ html body {
   font: 30px sans-serif;
 }
 
-.subject-status {
-  position: absolute;
-  top: 15px;
-}
-
 .subject-title {
   font-size: 14px;
 }
@@ -407,19 +346,6 @@ html body {
   font-weight: bold;
   color: #71dd37;
   margin: 0;
-}
-
-.activity-container {
-  width: 93%;
-  margin: 0 auto;
-  margin-top: 40px;
-  border-radius: 8px;
-}
-
-.activity {
-  background-color: #2a2b3f;
-  height: 300px;
-  border-radius: 8px;
 }
 
 .ranking-container {

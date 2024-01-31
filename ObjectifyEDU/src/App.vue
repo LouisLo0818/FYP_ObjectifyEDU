@@ -1,5 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
+import Navbar from "../src/examples/Navbar.vue";
+import side from "../src/examples/side.vue";
 </script>
 
 <template>
@@ -16,7 +18,7 @@ import { RouterLink, RouterView } from "vue-router";
     </div>
   </header>
   -->
-  <RouterView /> 
+  <RouterView />
   <!-- <LoginForm /> -->
 </template>
 

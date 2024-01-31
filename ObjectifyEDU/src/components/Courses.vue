@@ -1,7 +1,3 @@
-<script setup>
-import completed from '@/examples/completed.vue';
-</script>
-
 <template>
   <div class="flex-container">
     <side />
@@ -196,5 +192,4 @@ html body {
   background-color: #453c38;
   margin-right: 10px;
 }
-
 </style>
