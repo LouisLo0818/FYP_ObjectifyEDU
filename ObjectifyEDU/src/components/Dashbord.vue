@@ -90,20 +90,24 @@
         </div>
         <div class="row mt-1 mb-4 g-3 row-cols-1 row-cols-sm-1 row-cols-md-2">
           <div class="col">
-            <div class="p-3" style="
-                background-color: #ffffff;
-                border-radius: 8px;
-                height: 300px;
-                box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-              ">
-              <h3 style="margin: 0;">Activity</h3>
-              <div class="chart-container">
-                <!-- <bar :data="data" :options="options"></bar> -->
+            <div class="card h-100"
+              style="border: none;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;">
+              <h4 class="card-header" style="background: #ffffff;border-bottom: none;">Activity Time</h4>
+              <div class="card-body">
                 <LineChart />
               </div>
             </div>
           </div>
           <div class="col">
+            <div class="card h-100"
+              style="border: none;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;">
+              <h4 class="card-header" style="background: #ffffff;border-bottom: none;">Learning Time</h4>
+              <div class="card-body">
+                <Doughnut />
+              </div>
+            </div>
+          </div>
+          <!-- <div class="col">
             <div class="p-3" style="
                 background-color: #ffffff;
                 border-radius: 8px;
@@ -113,7 +117,7 @@
               <h3>Learning Time</h3>
               <Doughnut />
             </div>
-          </div>
+          </div> -->
           <div class="col">
             <div class="p-3" style="
                 background-color: #ffffff;
@@ -280,6 +284,10 @@ export default {
   height: 240px;
   max-width: 89%;
   margin: 0 auto;
+}
+
+.card-shadow {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
 }
 
 html body {

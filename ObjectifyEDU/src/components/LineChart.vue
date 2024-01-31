@@ -1,5 +1,5 @@
 <template>
-    <Line :data="chartConfig.data" :options="chartConfig.options" />
+    <Line :data="chartConfig.data" :options="chartConfig.options"/>
 </template>
   
 <script>
@@ -32,7 +32,7 @@ export default {
                     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
                     datasets: [
                         {
-                            label: 'Activity Time',
+                            label: 'Activity Time ( Hours )',
                             backgroundColor: '#f87979',
                             data: [40, 39, 10, 40, 39, 80, 40]
                         }
@@ -48,5 +48,6 @@ export default {
 }
 </script>
   
-<style scoped></style>
+<style scoped>
+</style>
   
