@@ -6,9 +6,45 @@
       <div class="Course-title-container">
         <h1 class="display-6">My Courses</h1>
       </div>
-      <div class="container course-container">
+      <div class="container" style="margin: 0 auto; max-width: 95%; padding: 0 0">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-4" style="margin: 0; padding: 0">
+          <router-link v-for="(id, index) in  course_id " :to="`/Courses/Games/${id}`"
+            style="text-decoration: none; color: inherit;">
+            <div class="d-flex flex-column" style="margin: 0; padding: 0">
+              <div class="p-4 course-square">
+                <div style="height: 70%;">
+                  <img :src="course_img[index]" class="course-logo" />
+                  <h6>{{ course_name[index] }}</h6>
+                </div>
+                <div>
+                  <div class="lesson-container">
+                    <div class="lesson-number">
+                      <i class="bx bx-book-open">&nbsp;</i>
+                      <span>{{ lessons[index] }} Lessons</span>
+                    </div>
+                    <div class="lesson-time">
+                      <i class="bx bx-time">&nbsp;</i>
+                      <span>{{ time[index] }} hours</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="progress-container">
+                    <div class="progress progress-height">
+                      <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
+                        style="width: 0%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
+                        aria-valuemax="100"></div>
+                    </div>
+                    <span>{{ SEDbar }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </router-link>
+        </div>
+      </div>
+      <!-- <div class="container course-container">
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-4">
-
           <router-link v-for="(id, index) in  course_id " :to="`/Courses/Games/${id}`"
             style="text-decoration: none; color: inherit;">
             <div class="col">
@@ -37,7 +73,7 @@
             </div>
           </router-link>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
