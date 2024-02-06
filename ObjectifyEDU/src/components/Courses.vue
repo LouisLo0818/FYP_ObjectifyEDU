@@ -4,10 +4,10 @@
     <div class="main">
       <navbar />
       <div class="Course-title-container">
-        <h1 class="display-6">My Courses</h1>
+        <h1 style="margin: 0;">My Courses</h1>
       </div>
       <div class="container" style="margin: 0 auto; max-width: 95%; padding: 0 0">
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-4" style="margin: 0; padding: 0">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
           <router-link v-for="(id, index) in  course_id " :to="`/Courses/Games/${id}`"
             style="text-decoration: none; color: inherit;">
             <div class="d-flex flex-column" style="margin: 0; padding: 0">
@@ -134,7 +134,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 html body {
   width: 100%;
   height: 100%;
@@ -150,7 +150,7 @@ html body {
 
 .main {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-color: #f5f5f9;
   color: #4c5f71;
   /* margin-left: 260px; */
