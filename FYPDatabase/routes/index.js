@@ -84,7 +84,7 @@ router.post("/api/Process", async function (req, res) {
   // let medinceRecord = await database.collection('medApp_medicineRecord').find(query).toArray();
   if (!stuRecord) {
     return res.status(404).send("No student record found."); //no need resultCode, just send error message
-  }
+  } 
   console.log(stuRecord);
 
   return res.json(stuRecord);

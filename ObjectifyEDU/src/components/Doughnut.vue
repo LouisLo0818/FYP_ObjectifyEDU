@@ -1,7 +1,6 @@
 <template>
-  <div class="doughnut-container">
+  <!-- <div class="doughnut-container">
     <Doughnut :data="data" :options="options" style="position: relative; z-index: 2" />
-    <div class="learning-time">2h&nbsp35m</div>
   </div>
   <div class="container" style="margin-top: 20px">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4" style="height: 50px">
@@ -30,6 +29,34 @@
         <span style="margin-left: 10px; font-size: 20px">25%</span>
       </div>
     </div>
+  </div> -->
+  <div class="container">
+    <div class="chart-container">
+      <div style="position: absolute;font-size: 30px;">2H 35M</div>
+      <Doughnut :data="data" :options="options"/>
+    </div>
+    <div style="margin-top: 20px;">
+      <div class="d-flex align-items-center mb-2">
+        <div class="bullet-item me-2" style="background-color: #ffd786;"></div>
+        <h6 class="text-body fw-semibold flex-1 mb-0">Social - Emotional Development</h6>
+        <h6 class="text-body fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+      </div>
+      <div class="d-flex align-items-center mb-2">
+        <div class="bullet-item me-2" style="background-color: #bcefa1;"></div>
+        <h6 class="text-body fw-semibold flex-1 mb-0">Founddations of mathematics</h6>
+        <h6 class="text-body fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+      </div>
+      <div class="d-flex align-items-center mb-2">
+        <div class="bullet-item me-2" style="background-color: #87e2f5;"></div>
+        <h6 class="text-body fw-semibold flex-1 mb-0">Language</h6>
+        <h6 class="text-body fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+      </div>
+      <div class="d-flex align-items-center mb-2">
+        <div class="bullet-item me-2" style="background-color: #b8b9ff;"></div>
+        <h6 class="text-body fw-semibold flex-1 mb-0">Reaction</h6>
+        <h6 class="text-body fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -46,8 +73,7 @@ export default {
   data() {
     return {
       data: {
-        labels: ["VueJs", "EmberJs", "ReactJs", "AngularJs"],
-        canvasWidth: 400, // Set the width of the canvas
+        labels: ["Social - Emotional Development", "Reaction", "Language", "Founddations of mathematics"],
         datasets: [
           {
             backgroundColor: [
@@ -57,20 +83,31 @@ export default {
               "rgba(188, 239, 161, 1)",
             ],
             data: [40, 20, 80, 10],
-            borderWidth: 0, // Set the bar width here
+            // borderWidth: 0, // Set the bar width here
           },
         ],
       },
       options: {
-        //responsive: true,
-        maintainAspectRatio: false,
-        cutout: 60,
+        // How to make the labels below the chart?
+
+        // //responsive: true,
+        // maintainAspectRatio: false,
+        // cutout: 60,
+        // how the display the labels below the chart and flex direction column
         plugins: {
           legend: {
             display: false,
             position: "bottom",
+            labels: {
+              usePointStyle: true,
+            },
           },
         },
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: 120,
+        radius: 100,
+        spacing: 3
       },
       centerText: {
         display: true,
@@ -87,7 +124,19 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.chart-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: -30px auto;
+}
+
+.chart-container {
+  flex-direction: column;
+}
+
 .doughnut-container {
   display: flex;
   width: 160px;
@@ -125,5 +174,11 @@ export default {
 
 .learning-subject i {
   font-size: 30px;
+}
+
+.bullet-item {
+  height: 0.5rem;
+  width: 1rem;
+  border-radius: 2px;
 }
 </style>

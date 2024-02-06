@@ -102,7 +102,7 @@
             <div class="card h-100"
               style="border: none;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;">
               <h4 class="card-header" style="background: #ffffff;border-bottom: none;">Learning Time</h4>
-              <div class="card-body">
+              <div class="card-body" style="padding-top: 0%;">
                 <Doughnut />
               </div>
             </div>
