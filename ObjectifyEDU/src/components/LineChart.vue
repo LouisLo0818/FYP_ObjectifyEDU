@@ -33,11 +33,13 @@ export default {
                     datasets: [
                         {
                             label: 'Activity Time ( Hours )',
-                            backgroundColor: '#f87979',
-                            data: [40, 39, 10, 40, 39, 80, 40]
+                            data: [40, 39, 10, 40, 39, 80, 40],
+                            tension: 0.3,
+                            borderColor: 'rgb(75, 192, 192)'
                         }
                     ]
                 },
+                tension: 1,
                 options: {
                     responsive: true,
                     maintainAspectRatio: false
