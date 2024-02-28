@@ -56,13 +56,13 @@
           <!-- <h1>{{ totalFingerCount }}</h1>
           <h1>{{ handCount }}</h1> -->
         </div>
-        <div class="col-3 course-content" >
+        <div class="col-3 course-content">
           <h5 style="padding: 10px 0 20px 0;">{{ gameName }}</h5>
           <ul class="question-list">
             <li v-for="(question, index) in questions" :key="question.question_id" class="question-item"
               :class="{ 'clicked': clickedIndex === index }" @click="handleClick(question.question_id)">
-              <span class="question-number">0{{ index + 1 }}</span>
-              <span class="question-text">{{ question.questionText }}</span>
+              <span class="question-number fs-3">{{ index < 9 ? '0' + (index + 1) : index + 1 }}</span>
+                  <span class="question-text">{{ question.questionText }}</span>
             </li>
           </ul>
         </div>
@@ -92,8 +92,8 @@ export default {
       // correctOption: [],
       questions: [],
       clickedIndex: 0, // To store the index of the clicked question,
-      videoWidth: 1920,
-      videoHeight: 1080,
+      videoWidth: 0,
+      videoHeight: 0,
     };
   },
   computed: {
@@ -108,8 +108,8 @@ export default {
     this.setCanvasSize();
     // Add event listener to call setCanvasSize on window resize
     window.addEventListener('resize', this.setCanvasSize);
-    this.setCanvasContainer();
-    window.addEventListener('resize', this.setCanvasContainer);
+    //  # this.setCanvasContainer();
+    //  # window.addEventListener('resize', this.setCanvasContainer);
     // const startTime = Date.now();
     // const duration = 5000; // 5 seconds
 
@@ -135,7 +135,7 @@ export default {
     // Clear the interval when the component is destroyed
     clearInterval(this.interval);
     window.removeEventListener('resize', this.setCanvasSize);
-    window.removeEventListener('resize', this.setCanvasContainer);
+    //  # window.removeEventListener('resize', this.setCanvasContainer);
   },
   methods: {
     initializeMediaPipe() {
@@ -161,8 +161,8 @@ export default {
         onFrame: async () => {
           await hands.send({ image: videoElement });
         },
-        width: 1680,
-        height: 1050
+        width: screen.width,
+        height: screen.height
       });
       camera.start();
     },
@@ -199,7 +199,7 @@ export default {
       if (landmarks[8].y < landmarks[6].y) {
         fingerCount += 1;
       }
-      // Middle Finger
+      // Middle Finger  
       if (landmarks[12].y < landmarks[10].y) {
         fingerCount += 1;
       }
@@ -307,29 +307,29 @@ export default {
       const height = screen.height
       console.log(height)
       this.videoWidth = width;
-      this.videoHeight = height;
+      this.videoHeight = height * 0.65;
     },
-    setCanvasContainer() {
-      const deivce_scale = window.devicePixelRatio // get the scale and layout from PC setting
-      const screenWidth = screen.width * deivce_scale // actual screen size
-      const canvas_container = document.querySelector(".video-container");
-      const userAgent = navigator.userAgent || navigator.vendor || window.opera; // get device is PC or iPad
-      // For PC
-      if (!/Macintosh|iPad|iPhone|iPod/.test(userAgent)) {
-        if (screenWidth >= 1600) { // PC 1680 x 1050
-          canvas_container.style.height = "60vh";
-        }
-      } else {
-        console.log(this.screenWidth);
-        if (screen.width >= 1300 && screen.width <= 1366) { // iPad Pro size 1366 x 1024
-          canvas_container.style.height = "70vh";
-        } else if (screen.width >= 1100 && screen.width <= 1180) { // iPad Air size 1180 x 820
-          canvas_container.style.height = "65vh";
-        } else if (screen.width >= 1000 && screen.width <= 1024) { // iPad mini size 1024 x 768
-          canvas_container.style.height = "65vh";
-        }
-      }
-    }
+    //  # setCanvasContainer() {
+    //   const deivce_scale = window.devicePixelRatio // get the scale and layout from PC setting
+    //   const screenWidth = screen.width * deivce_scale // actual screen size
+    //   const canvas_container = document.querySelector(".video-container");
+    //   const userAgent = navigator.userAgent || navigator.vendor || window.opera; // get device is PC or iPad
+    //   // For PC
+    //   if (!/Macintosh|iPad|iPhone|iPod/.test(userAgent)) {
+    //     if (screenWidth >= 1600) { // PC 1680 x 1050
+    //       canvas_container.style.height = "60vh";
+    //     }
+    //   } else {
+    //     console.log(this.screenWidth);
+    //     if (screen.width >= 1300 && screen.width <= 1366) { // iPad Pro size 1366 x 1024
+    //       canvas_container.style.height = "70vh";
+    //     } else if (screen.width >= 1100 && screen.width <= 1180) { // iPad Air size 1180 x 820
+    //       canvas_container.style.height = "65vh";
+    //     } else if (screen.width >= 1000 && screen.width <= 1024) { // iPad mini size 1024 x 768
+    //       canvas_container.style.height = "65vh";
+    //     }
+    //   }
+    // }
   },
 
   //------------------------------------------------------------------------------------------------------------//
@@ -355,6 +355,7 @@ export default {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  overflow-y: hidden;
   /* Prevent scrolling on the whole page */
   background-color: #f5f5f9;
 }
@@ -431,6 +432,7 @@ export default {
 
 .video-container {
   width: 100%;
+  height: 100%;
 }
 
 .progress {
@@ -442,6 +444,7 @@ export default {
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   padding: 20px;
+  height: 100%;
 }
 
 .question-list {
@@ -512,7 +515,6 @@ export default {
 
 .question-number {
   margin-right: 20px;
-  font-size: 30px;
   /* Space after the number */
 }
 

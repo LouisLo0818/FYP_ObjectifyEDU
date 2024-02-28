@@ -123,7 +123,7 @@ export default {
 
 .main {
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background-color: #f5f5f9;
     color: #4c5f71;
     /* margin-left: 260px; */
