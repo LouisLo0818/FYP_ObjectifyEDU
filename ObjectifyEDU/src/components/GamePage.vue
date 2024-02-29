@@ -46,7 +46,8 @@
             </div>
           </div>
           <div class="col">
-            <div class="answer-container" style="height: 100%;">
+            <!-- <div class="answer-container" style="height: 100%;"> -->
+            <div class="answer-container">
               <button class="answer-button">A</button>
               <button class="answer-button">B</button>
               <button class="answer-button">C</button>
@@ -307,7 +308,24 @@ export default {
       const height = screen.height
       console.log(height)
       this.videoWidth = width;
-      this.videoHeight = height * 0.65;
+      // this.videoHeight = height * 0.6;
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+      if (!/Macintosh|iPad|iPhone|iPod/.test(userAgent)) {
+        // if (screen.width >= 1600) { // PC 1680 x 1050
+        //   this.videoHeight = height;
+        // }
+        this.videoHeight = height * 0.65;
+      } else {
+        console.log(this.screenWidth);
+        if (screen.width >= 1300 && screen.width <= 1366) { // iPad Pro size 1366 x 1024
+          this.videoHeight = height;
+        } else if (screen.width >= 1100 && screen.width <= 1180) { // iPad Air size 1180 x 820
+          this.videoHeight = height * 0.9;
+        } else if (screen.width >= 1000 && screen.width <= 1024) { // iPad mini size 1024 x 768
+          this.videoHeight = height * 0.85;
+        }
+      }
     },
     //  # setCanvasContainer() {
     //   const deivce_scale = window.devicePixelRatio // get the scale and layout from PC setting
