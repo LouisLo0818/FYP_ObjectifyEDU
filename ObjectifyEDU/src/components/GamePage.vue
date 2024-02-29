@@ -35,23 +35,42 @@
               </div>
             </div>
           </div>
-          <div class="col" style="padding-bottom: 30px;">
-            <div class="video-container" ref="videoContainer">
+          <div class="col" style="flex: 1;display: flex; flex-direction: column;">
+            <div class="col" style="flex: 0;">
               <div class="progress">
                 <div class="progress-bar" role="progressbar" :style="{ width: progressBarWidth + '%' }"
                   aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
+            </div>
+            <div class="col" style="flex: 1">
               <video ref="videoElement" class="input_video"></video>
               <canvas ref="canvasElement" class="output_canvas" :width="videoWidth" :height="videoHeight"></canvas>
             </div>
           </div>
-          <div class="col">
+          <div class="col" style="flex: 0;">
             <!-- <div class="answer-container" style="height: 100%;"> -->
-            <div class="answer-container">
+            <!-- <div class="answer-container h-100">
               <button class="answer-button">A</button>
               <button class="answer-button">B</button>
+              <br />
               <button class="answer-button">C</button>
               <button class="answer-button">D</button>
+            </div> -->
+            <div class="container overflow-hidden text-center" style="background-color: white;">
+              <div class="row g-2 row-cols-2">
+                <div class="col">
+                  <div class="p-2 border bg-light">Custom column padding</div>
+                </div>
+                <div class="col">
+                  <div class="p-2 border bg-light">Custom column padding</div>
+                </div>
+                <div class="col">
+                  <div class="p-2 border bg-light">Custom column padding</div>
+                </div>
+                <div class="col">
+                  <div class="p-2 border bg-light">Custom column padding</div>
+                </div>
+              </div>
             </div>
           </div>
           <!-- <h1>{{ totalFingerCount }}</h1>
@@ -163,7 +182,7 @@ export default {
           await hands.send({ image: videoElement });
         },
         width: screen.width,
-        height: screen.height
+        height: screen.height,
       });
       camera.start();
     },
@@ -302,30 +321,16 @@ export default {
 
     setCanvasSize() {
       const deivce_scale = window.devicePixelRatio // get the scale and layout from PC setting
+      const screenWidth = screen.width * deivce_scale // actual screen size
+      const screenHeight = screen.height * deivce_scale // actual screen size
+
       console.log(deivce_scale)
       const width = screen.width
       console.log(width)
       const height = screen.height
       console.log(height)
       this.videoWidth = width;
-      // this.videoHeight = height * 0.6;
-      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-      if (!/Macintosh|iPad|iPhone|iPod/.test(userAgent)) {
-        // if (screen.width >= 1600) { // PC 1680 x 1050
-        //   this.videoHeight = height;
-        // }
-        this.videoHeight = height * 0.65;
-      } else {
-        console.log(this.screenWidth);
-        if (screen.width >= 1300 && screen.width <= 1366) { // iPad Pro size 1366 x 1024
-          this.videoHeight = height;
-        } else if (screen.width >= 1100 && screen.width <= 1180) { // iPad Air size 1180 x 820
-          this.videoHeight = height * 0.9;
-        } else if (screen.width >= 1000 && screen.width <= 1024) { // iPad mini size 1024 x 768
-          this.videoHeight = height * 0.85;
-        }
-      }
+      this.videoHeight = height * 0.7;
     },
     //  # setCanvasContainer() {
     //   const deivce_scale = window.devicePixelRatio // get the scale and layout from PC setting
@@ -391,7 +396,7 @@ export default {
 .output_canvas {
   border-radius: 20px;
   width: 100%;
-  height: 100%;
+  height: 97%;
 }
 
 .logo img {
@@ -448,10 +453,6 @@ export default {
   height: 50px;
 }
 
-.video-container {
-  width: 100%;
-  height: 100%;
-}
 
 .progress {
   margin-top: 20px;
@@ -537,7 +538,7 @@ export default {
 }
 
 .answer-container {
-  display: flex;
+  /* display: flex; */
   justify-content: space-around;
   align-items: center;
   background-color: white;
@@ -547,9 +548,10 @@ export default {
 }
 
 .answer-button {
+  width: 20%;
   border: 1px solid #ccc;
   background-color: #fff;
-  padding: 15px 30px;
+  padding: 10px 30px;
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
