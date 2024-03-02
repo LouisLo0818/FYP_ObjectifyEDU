@@ -56,7 +56,8 @@
               <button class="answer-button">C</button>
               <button class="answer-button">D</button>
             </div> -->
-            <div class="container overflow-hidden text-center" style="background-color: white;">
+            <div class="container overflow-hidden text-center"
+              style="background-color: white;border-radius: 20px;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;">
               <div class="row g-2 row-cols-2">
                 <div class="col">
                   <div class="p-2 border bg-light">Custom column padding</div>
@@ -76,8 +77,11 @@
           <!-- <h1>{{ totalFingerCount }}</h1>
           <h1>{{ handCount }}</h1> -->
         </div>
-        <div class="col-3 course-content">
-          <h5 style="padding: 10px 0 20px 0;">{{ gameName }}</h5>
+        <div class="col-3 course-content"
+          style="display: flex; flex-direction: column;height:100%;background-color: #ffffff;">
+          <div style="display: flex;justify-content: center;align-items: center;height: 10%;">
+            <h4 style="margin: 0;">{{ gameName }}</h4>
+          </div>
           <ul class="question-list">
             <li v-for="(question, index) in questions" :key="question.question_id" class="question-item"
               :class="{ 'clicked': clickedIndex === index }" @click="handleClick(question.question_id)">
@@ -85,7 +89,35 @@
                   <span class="question-text">{{ question.questionText }}</span>
             </li>
           </ul>
+          <div class="next-previous-container">
+            <div class="container overflow-hidden text-center" style="padding: 0 10px;">
+              <div class="row g-2">
+                <div class="col">
+                  <div class="p-2 border bg-light" style="border-radius: 40px">Custom</div>
+                </div>
+                <div class="col">
+                  <div class="p-2 border bg-light" style="border-radius: 40px">Custom</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+        <!-- <div class="col-3 course-content" style="display: flex; flex-direction: column;padding: 0;">
+          <h5 style="padding: 10px 0 20px 0;">{{ gameName }}</h5>
+          <ul class="question-list" style="height: 100%;overflow-y: scroll;flex: 1;">
+            <li v-for="(question, index) in questions" :key="question.question_id" class="question-item"
+              :class="{ 'clicked': clickedIndex === index }" @click="handleClick(question.question_id)">
+              <span class="question-number fs-3">{{ index < 9 ? '0' + (index + 1) : index + 1 }}</span>
+                  <span class="question-text">{{ question.questionText }}</span>
+            </li>
+          </ul>
+          <div class="col" style="flex: 0;">
+            <div class="next-previous-container">
+              <button class="action-button">Previous</button>
+              <button class="action-button">Next</button>
+            </div>
+          </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -460,15 +492,19 @@ export default {
 
 .course-content {
   background-color: #ffffff;
-  border-radius: 20px;
+  border-radius: 30px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-  padding: 20px;
   height: 100%;
+  padding: 0;
 }
 
 .question-list {
   list-style-type: none;
   padding-left: 0;
+  overflow-y: scroll;
+  flex: 1;
+  scrollbar-width: none;
+  padding: 0 20px;
 }
 
 .question-item {
@@ -565,5 +601,15 @@ export default {
 .answer-button.selected {
   background-color: #ffa500;
   color: white;
+}
+
+.next-previous-container {
+  background-color: #c3c3c3;
+  height: 60px;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 </style>
