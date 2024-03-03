@@ -48,28 +48,47 @@
             </div>
           </div>
           <div class="col" style="flex: 0;">
-            <!-- <div class="answer-container" style="height: 100%;"> -->
-            <!-- <div class="answer-container h-100">
-              <button class="answer-button">A</button>
-              <button class="answer-button">B</button>
-              <br />
-              <button class="answer-button">C</button>
-              <button class="answer-button">D</button>
-            </div> -->
-            <div class="container overflow-hidden text-center"
-              style="background-color: white;border-radius: 20px;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;">
-              <div class="row g-2 row-cols-2">
+            <div class="container overflow-hidden text-center answer-container">
+              <div class="row gx-3 gy-3 row-cols-2">
                 <div class="col">
-                  <div class="p-2 border bg-light">Custom column padding</div>
+                  <div class="input-group flex-nowrap">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansA" autocomplete="off"
+                      @change="toggleLabelColor">
+                    <label class="btn answer-button answer-A" for="ansA"
+                      style="border-radius: 0.357rem 0 0 0.357rem;">A</label>
+                    <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                      aria-describedby="basic-addon1" disabled />
+                  </div>
                 </div>
                 <div class="col">
-                  <div class="p-2 border bg-light">Custom column padding</div>
+                  <div class="input-group flex-nowrap">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansB" autocomplete="off"
+                      @change="toggleLabelColor">
+                    <label class="btn answer-button answer-B" for="ansB"
+                      style="border-radius: 0.357rem 0 0 0.357rem;">B</label>
+                    <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                      aria-describedby="addon-wrapping" disabled />
+                  </div>
                 </div>
                 <div class="col">
-                  <div class="p-2 border bg-light">Custom column padding</div>
+                  <div class="input-group flex-nowrap">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansC" autocomplete="off"
+                      @change="toggleLabelColor">
+                    <label class="btn answer-button answer-C" for="ansC"
+                      style="border-radius: 0.357rem 0 0 0.357rem;">C</label>
+                    <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                      aria-describedby="addon-wrapping" disabled />
+                  </div>
                 </div>
                 <div class="col">
-                  <div class="p-2 border bg-light">Custom column padding</div>
+                  <div class="input-group flex-nowrap">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansD" autocomplete="off"
+                      @change="toggleLabelColor">
+                    <label class="btn answer-button answer-D" for="ansD"
+                      style="border-radius: 0.357rem 0 0 0.357rem;">D</label>
+                    <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                      aria-describedby="addon-wrapping" disabled />
+                  </div>
                 </div>
               </div>
             </div>
@@ -77,8 +96,7 @@
           <!-- <h1>{{ totalFingerCount }}</h1>
           <h1>{{ handCount }}</h1> -->
         </div>
-        <div class="col-3 course-content"
-          style="display: flex; flex-direction: column;height:100%;background-color: #ffffff;">
+        <div class="col-3 course-content">
           <div style="display: flex;justify-content: center;align-items: center;height: 10%;">
             <h4 style="margin: 0;">{{ gameName }}</h4>
           </div>
@@ -93,31 +111,23 @@
             <div class="container overflow-hidden text-center" style="padding: 0 10px;">
               <div class="row g-2">
                 <div class="col">
-                  <div class="p-2 border bg-light" style="border-radius: 40px">Custom</div>
+                  <button type="button" class="p-2 btn"
+                    style="border-radius: 40px;background-color: #fa5c7c;color: white; display: flex; align-items: center;justify-content: center;">
+                    <i class='bx bx-chevrons-left' style="font-size: 20px;"></i>
+                    <span style="margin-left: 5px;font-size: 15px;">Previous</span>
+                  </button>
                 </div>
                 <div class="col">
-                  <div class="p-2 border bg-light" style="border-radius: 40px">Custom</div>
+                  <button type="button" class="p-2 btn"
+                    style="border-radius: 40px;background-color: #0acf97;color: white; display: flex; align-items: center;justify-content: center;">
+                    <span style="margin-right: 5px;font-size: 15px;">Next</span>
+                    <i class='bx bx-chevrons-right' style="font-size: 20px;"></i>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <!-- <div class="col-3 course-content" style="display: flex; flex-direction: column;padding: 0;">
-          <h5 style="padding: 10px 0 20px 0;">{{ gameName }}</h5>
-          <ul class="question-list" style="height: 100%;overflow-y: scroll;flex: 1;">
-            <li v-for="(question, index) in questions" :key="question.question_id" class="question-item"
-              :class="{ 'clicked': clickedIndex === index }" @click="handleClick(question.question_id)">
-              <span class="question-number fs-3">{{ index < 9 ? '0' + (index + 1) : index + 1 }}</span>
-                  <span class="question-text">{{ question.questionText }}</span>
-            </li>
-          </ul>
-          <div class="col" style="flex: 0;">
-            <div class="next-previous-container">
-              <button class="action-button">Previous</button>
-              <button class="action-button">Next</button>
-            </div>
-          </div>
-        </div> -->
       </div>
     </div>
   </div>
@@ -146,6 +156,7 @@ export default {
       clickedIndex: 0, // To store the index of the clicked question,
       videoWidth: 0,
       videoHeight: 0,
+      isRadioButtonChecked: false,
     };
   },
   computed: {
@@ -364,6 +375,39 @@ export default {
       this.videoWidth = width;
       this.videoHeight = height * 0.7;
     },
+    toggleLabelColor() {
+      const radioColors = {
+        ansA: { backgroundColor: "#727cf5", color: "#f1f2fe" },
+        ansB: { backgroundColor: "#ffd37b", color: "#fff9ef" },
+        ansC: { backgroundColor: "#0acf97", color: "#e7faf5" },
+        ansD: { backgroundColor: "#39b6dd", color: "#ebf7fa" }
+      };
+
+      const baseColors = {
+        ansA: { backgroundColor: "#f1f2fe", color: "#727cf5" },
+        ansB: { backgroundColor: "#fff9ef", color: "#ffd37b" },
+        ansC: { backgroundColor: "#e7faf5", color: "#0acf97" },
+        ansD: { backgroundColor: "#ebf7fa", color: "#39b6dd" }
+      };
+
+
+      const radios = document.querySelectorAll('input[name="btnradio"]');
+
+      radios.forEach((radio) => {
+        const label = document.querySelector(`label[for=${radio.id}]`);
+        const colors = radioColors[radio.id];
+        const base = baseColors[radio.id];
+
+        if (radio.checked) {
+          label.style.backgroundColor = colors.backgroundColor;
+          label.style.color = colors.color;
+        } else {
+          label.style.backgroundColor = base.backgroundColor;
+          label.style.color = base.color;
+          label.style.transition = "all 0.5s";
+        }
+      });
+    }
     //  # setCanvasContainer() {
     //   const deivce_scale = window.devicePixelRatio // get the scale and layout from PC setting
     //   const screenWidth = screen.width * deivce_scale // actual screen size
@@ -493,9 +537,11 @@ export default {
 .course-content {
   background-color: #ffffff;
   border-radius: 30px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  box-shadow: 0px 0px 35px 0px rgba(154, 161, 171, 0.15);
   height: 100%;
   padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .question-list {
@@ -574,42 +620,45 @@ export default {
 }
 
 .answer-container {
-  /* display: flex; */
-  justify-content: space-around;
-  align-items: center;
   background-color: white;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  padding: 10px;
+  padding: 1rem;
+  box-shadow: 0px 0px 35px 0px rgba(154, 161, 171, 0.15);
 }
 
 .answer-button {
-  width: 20%;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  padding: 10px 30px;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  width: 30%;
 }
 
-.answer-button:hover {
-  background-color: #f0f0f0;
+.answer-A {
+  background-color: #f1f2fe;
+  color: #727cf5;
 }
 
-.answer-button.selected {
-  background-color: #ffa500;
-  color: white;
+
+.answer-B {
+  background-color: #fff9ef;
+  color: #ffd37b;
+}
+
+.answer-C {
+  background-color: #e7faf5;
+  color: #0acf97;
+}
+
+.answer-D {
+  background-color: #ebf7fa;
+  color: #39b6dd;
 }
 
 .next-previous-container {
-  background-color: #c3c3c3;
   height: 60px;
   border-radius: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
+  box-shadow: 0px 0px 35px 0px rgba(154, 161, 171, 0.15);
+  background-color: #ced4da;
 }
 </style>
