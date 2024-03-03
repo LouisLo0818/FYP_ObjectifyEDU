@@ -111,14 +111,14 @@
             <div class="container overflow-hidden text-center" style="padding: 0 10px;">
               <div class="row g-2">
                 <div class="col">
-                  <button type="button" class="p-2 btn"
+                  <button type="button" class="p-2 btn" @click="previousQuestion"
                     style="border-radius: 40px;background-color: #fa5c7c;color: white; display: flex; align-items: center;justify-content: center;">
                     <i class='bx bx-chevrons-left' style="font-size: 20px;"></i>
                     <span style="margin-left: 5px;font-size: 15px;">Previous</span>
                   </button>
                 </div>
                 <div class="col">
-                  <button type="button" class="p-2 btn"
+                  <button type="button" class="p-2 btn" @click="nextQuestion"
                     style="border-radius: 40px;background-color: #0acf97;color: white; display: flex; align-items: center;justify-content: center;">
                     <span style="margin-right: 5px;font-size: 15px;">Next</span>
                     <i class='bx bx-chevrons-right' style="font-size: 20px;"></i>
@@ -357,6 +357,16 @@ export default {
       if (this.clickedIndex !== -1) {
         // Set the questionText from the clicked question
         this.questionText = this.questions[this.clickedIndex].questionText;
+      }
+    }, 
+    nextQuestion() {
+      if (this.clickedIndex < this.questions.length - 1) {
+        this.clickedIndex++;
+      }
+    },
+    previousQuestion() {
+      if (this.clickedIndex > 0) {
+        this.clickedIndex--;
       }
     },
 
