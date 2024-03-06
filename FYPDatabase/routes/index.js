@@ -70,6 +70,29 @@ router.post("/api/login", async function (req, res) {
   }
 });
 
+// I want to find all of the class related to the logined in student
+router.get("/api/Class", async function (req, res) {
+  //verifyToken is a middleware function
+  // const database = client.db('eLearning');
+  const query = { student_id: req.body.stuid }; //object query
+
+  console.log(query);
+  let classRecords = await client
+    .db("eLearning")
+    .collection("Student")
+    .find({})
+    .toArray();
+
+  // let medinceRecord = await database.collection('medApp_medicineRecord').find(query).toArray();
+  if (!classRecords || classRecords.length === 0) {
+    return res.status(404).send("No class records found.");
+  }
+
+  console.log(classRecords);
+
+  return res.json(classRecords);
+});
+
 router.post("/api/Process", async function (req, res) {
   //verifyToken is a middleware function
   // const database = client.db('eLearning');
@@ -84,7 +107,7 @@ router.post("/api/Process", async function (req, res) {
   // let medinceRecord = await database.collection('medApp_medicineRecord').find(query).toArray();
   if (!stuRecord) {
     return res.status(404).send("No student record found."); //no need resultCode, just send error message
-  } 
+  }
   console.log(stuRecord);
 
   return res.json(stuRecord);

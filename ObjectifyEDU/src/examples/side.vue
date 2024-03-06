@@ -1,7 +1,9 @@
 <template>
   <div class="sidebar-container">
     <div class="nav-header">
-      <h1 class="nav-title">Header</h1>
+      <h1 class="nav-title">
+        <img src="../../src/assets/img/logo.png" alt="Logo" style="width: 100px;" />
+      </h1>
     </div>
     <ul class="sidebar-items">
       <router-link to="/Dashboard" class="path-title">
@@ -66,7 +68,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
 }
 
 .nav-title {

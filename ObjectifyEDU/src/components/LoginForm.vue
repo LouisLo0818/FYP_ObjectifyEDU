@@ -2,7 +2,7 @@
   <div id="app" class="login-container">
     <h3 class="login-header">Log in</h3>
     <form @submit.prevent="login" class="login-form">
-      <p class="signup-link">Need an account? <a href="#">Sign up</a></p>
+      <!-- <p class="signup-link">Need an account? <a href="#">Sign up</a></p> -->
 
       <div class="form-group">
         <label for="email" class="form-label">Account</label>
@@ -23,9 +23,9 @@
       <button type="submit" class="btn btn-primary">
         Login
       </button>
-      <p class="forgot-password-link">
+      <!-- <p class="forgot-password-link">
         Forgot your password? <a href="#">Click here</a>
-      </p>
+      </p> -->
     </form>
   </div>
 </template>
@@ -61,25 +61,39 @@ export default {
           body: JSON.stringify(credentials),
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          localStorage.setItem("user", data.token);
-          const decoded = jwtDecode(data.token);
-          alert(JSON.stringify(decoded));
-          const info = JSON.stringify(decoded.result.student_id);
-          localStorage.setItem("student_id", info.replace(/"/g, ''));
-          console.log(localStorage.getItem("student_id"));
-          alert(data.token);
-          alert("Login Successful.");
-          location.assign("/Dashboard");
-        } else {
-          alert("Login failed. Please try again.");
+        // Handle non-OK HTTP responses
+        if (!response.ok) {
+          // This could be enhanced to handle specific HTTP status codes if necessary
+          const errorText = await response.text();
+          alert(`Login failed: ${errorText}`);
+          return;
         }
+
+        // Process successful response
+        const data = await response.json();
+        localStorage.setItem("user", data.token);
+
+        // Decode the token to get user info
+        const decoded = jwtDecode(data.token);
+        console.log(decoded.result);
+
+        // Store student ID directly without JSON stringify/parse
+        localStorage.setItem("student_id", decoded.result.student_id);
+        localStorage.setItem("username", decoded.result.username);
+        localStorage.setItem("class_name", decoded.result.class_name);
+
+        console.log(localStorage.getItem("student_id"));
+        console.log(localStorage.getItem("username"));
+        console.log(localStorage.getItem("class_name"));
+
+        alert("Login Successful.");
+        location.assign("/Dashboard");
       } catch (error) {
-        console.error(error);
-        alert("An error occurred during login. Please try again.");
+        // Network error or error in processing response
+        console.error("Login error:", error);
+        alert("An error occurred during login. Please try again later.");
       }
-    },
+    }
   },
 };
 </script>

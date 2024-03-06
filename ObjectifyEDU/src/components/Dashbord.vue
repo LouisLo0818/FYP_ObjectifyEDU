@@ -107,52 +107,24 @@
               </div>
             </div>
           </div>
-          <!-- <div class="col">
-            <div class="p-3" style="
-                background-color: #ffffff;
-                border-radius: 8px;
-                height: 300px;
-                box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-              ">
-              <h3>Learning Time</h3>
-              <Doughnut />
-            </div>
-          </div> -->
           <div class="col">
-            <div class="p-3" style="
-                background-color: #ffffff;
-                border-radius: 8px;
-                height: 300px;
-                box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-              ">
-              <h3>Ranking</h3>
+            <div class="card h-100"
+              style="border: none;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;">
+              <h4 class="card-header" style="background: #ffffff;border-bottom: none;">Ranking</h4>
               <div class="ranking-container">
-                <table class="table table-borderless">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">First</th>
-                      <th scope="col">Last</th>
-                      <th scope="col">Handle</th>
-                    </tr>
-                  </thead>
+                <table class="table table-hover">
                   <tbody>
                     <tr>
                       <th scope="row">1</th>
-                      <td>Mark</td>
-                      <td>Otto</td>
-                      <td>@mdo</td>
+                      <td>Cell</td>
                     </tr>
                     <tr>
                       <th scope="row">2</th>
-                      <td>Jacob</td>
-                      <td>Thornton</td>
-                      <td>@fat</td>
+                      <td>Cell</td>
                     </tr>
                     <tr>
                       <th scope="row">3</th>
-                      <td colspan="2">Larry the Bird</td>
-                      <td>@twitter</td>
+                      <td>Cell</td>
                     </tr>
                   </tbody>
                 </table>
@@ -160,13 +132,9 @@
             </div>
           </div>
           <div class="col">
-            <div class="p-3" style="
-                background-color: #ffffff;
-                border-radius: 8px;
-                height: 300px;
-                box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-              ">
-              <h3>Awards</h3>
+            <div class="card h-100"
+              style="border: none;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;">
+              <h4 class="card-header" style="background: #ffffff;border-bottom: none;">Awards</h4>
             </div>
           </div>
         </div>
@@ -277,6 +245,24 @@ export default {
 </script>
 
 <style scoped>
+/* Base settings */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f9;
+  font-family: sans-serif;
+  /* Define a default font family */
+}
+
+/* Utility classes */
+.flex-container {
+  display: flex;
+  height: 100%;
+}
+
 .chart-container {
   display: flex;
   align-items: center;
@@ -287,37 +273,28 @@ export default {
 }
 
 .card-shadow {
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
 }
 
-html body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: #f5f5f9;
-}
-
-.flex-container {
-  display: flex;
-  height: 100%;
-}
-
+/* Main content area */
 .main {
   width: 100%;
   height: 100%;
   background-color: #f5f5f9;
   color: #4c5f71;
-  /* margin-left: 260px; */
   padding-left: 260px;
+  /* Removed the commented code */
 }
 
+/* Responsive design adjustments */
 @media screen and (max-width: 1300px) {
   .main {
     padding-left: 0;
   }
 }
 
+/* Title containers */
 .ability-title-container {
   display: flex;
   width: 95%;
@@ -325,10 +302,11 @@ html body {
   margin-top: 40px;
 }
 
+/* Subject styling */
 .subject {
+  list-style: none;
   margin: auto 0;
   padding: 0;
-  list-style: none;
 }
 
 .subject-icon {
@@ -342,7 +320,8 @@ html body {
 }
 
 .subject-icon i {
-  font: 30px sans-serif;
+  font-size: 30px;
+  /* Changed 'font' to 'font-size' for clarity */
 }
 
 .subject-title {
@@ -356,19 +335,10 @@ html body {
   margin: 0;
 }
 
+/* Ranking table styles */
 .ranking-container {
   width: 93%;
   margin: 0 auto;
-  margin-top: 40px;
-  border-radius: 8px;
-}
-
-.table tbody td,
-.table tbody th,
-.table thead td,
-.table thead th {
-  background-color: #2a2b3f;
-  /* Change to your desired row color */
-  color: #dbdbeb;
+  overflow: hidden;
 }
 </style>
