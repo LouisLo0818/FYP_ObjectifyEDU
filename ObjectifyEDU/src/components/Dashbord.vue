@@ -115,8 +115,8 @@
                 <table class="table table-hover">
                   <tbody>
                     <tr v-for="(name, index) in userName" :key="index">
-                      <th scope="row">{{ index + 1 }}</th>
-                      <td>{{ name }}</td>
+                      <th scope="row" style="color: #4c5f71;">{{ index + 1 }}</th>
+                      <td style="color: #4c5f71;">{{ name }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -278,15 +278,18 @@ export default {
 </script>
 
 <style scoped>
-/* Base settings */
+* {
+  font-family: "Jost", sans-serif;
+  color: #4c5f71;
+}
+
 html,
 body {
   width: 100%;
-  height: auto;
+  height: 100%;
   margin: 0;
   padding: 0;
   background-color: #f5f5f9;
-  font-family: sans-serif;
   /* Define a default font family */
 }
 
@@ -315,7 +318,6 @@ body {
   width: 100%;
   height: 100%;
   background-color: #f5f5f9;
-  color: #4c5f71;
   padding-left: 260px;
   /* Removed the commented code */
 }
@@ -364,7 +366,6 @@ body {
 .subject-grade {
   font-size: 20px;
   font-weight: bold;
-  color: #71dd37;
   margin: 0;
 }
 

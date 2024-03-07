@@ -1,60 +1,29 @@
 <template>
-  <!-- <div class="doughnut-container">
-    <Doughnut :data="data" :options="options" style="position: relative; z-index: 2" />
-  </div>
-  <div class="container" style="margin-top: 20px">
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4" style="height: 50px">
-      <div class="col" style="display: flex; align-items: center">
-        <div class="learning-subject" style="background-color: #453c38">
-          <i class="bx bxs-happy-alt" style="color: #ffab00"></i>
-        </div>
-        <span style="margin-left: 10px; font-size: 20px">25%</span>
-      </div>
-      <div class="col" style="display: flex; align-items: center">
-        <div class="learning-subject" style="background-color: #36483f">
-          <i class="bx bx-math" style="color: #71dd37"></i>
-        </div>
-        <span style="margin-left: 10px; font-size: 20px">25%</span>
-      </div>
-      <div class="col" style="display: flex; align-items: center">
-        <div class="learning-subject" style="background-color: #24445c">
-          <i class="bx bxs-edit-alt" style="color: #04c3ec"></i>
-        </div>
-        <span style="margin-left: 10px; font-size: 20px">25%</span>
-      </div>
-      <div class="col" style="display: flex; align-items: center">
-        <div class="learning-subject" style="background-color: #3c3c72">
-          <i class='bx bx-run' style="color:#b8b9ff"></i>
-        </div>
-        <span style="margin-left: 10px; font-size: 20px">25%</span>
-      </div>
-    </div>
-  </div> -->
   <div class="container">
     <div class="chart-container">
       <div style="position: absolute;font-size: 30px;">2H 35M</div>
-      <Doughnut :data="data" :options="options"/>
+      <Doughnut :data="data" :options="options" />
     </div>
     <div style="margin-top: 20px;">
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #ffd786;"></div>
-        <h6 class="text-body fw-semibold flex-1 mb-0">Social - Emotional Development</h6>
-        <h6 class="text-body fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+        <h6 class="fw-semibold flex-1 mb-0">Social - Emotional Development</h6>
+        <h6 class="fw-semibold mb-0" style="margin-left: auto;">72%</h6>
       </div>
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #bcefa1;"></div>
-        <h6 class="text-body fw-semibold flex-1 mb-0">Founddations of mathematics</h6>
-        <h6 class="text-body fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+        <h6 class="fw-semibold flex-1 mb-0">Founddations of mathematics</h6>
+        <h6 class="fw-semibold mb-0" style="margin-left: auto;">72%</h6>
       </div>
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #87e2f5;"></div>
-        <h6 class="text-body fw-semibold flex-1 mb-0">Language</h6>
-        <h6 class="text-body fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+        <h6 class="fw-semibold flex-1 mb-0">Language</h6>
+        <h6 class="fw-semibold mb-0" style="margin-left: auto;">72%</h6>
       </div>
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #b8b9ff;"></div>
-        <h6 class="text-body fw-semibold flex-1 mb-0">Reaction</h6>
-        <h6 class="text-body fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+        <h6 class="fw-semibold flex-1 mb-0">Reaction</h6>
+        <h6 class="fw-semibold mb-0" style="margin-left: auto;">72%</h6>
       </div>
     </div>
   </div>
@@ -125,6 +94,11 @@ export default {
 </script>
 
 <style scoped>
+* {
+  font-family: "Jost", sans-serif;
+  color: #4c5f71;
+}
+
 .chart-container {
   display: flex;
   flex-direction: row;
