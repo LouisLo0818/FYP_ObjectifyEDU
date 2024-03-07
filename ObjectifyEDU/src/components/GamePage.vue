@@ -6,7 +6,7 @@
           <div class="col" style="flex: 0;">
             <div class="question-content d-flex align-items-center justify-content-between">
               <!-- Question Text -->
-              <div class="nav-title flex-grow-1 mx-3">
+              <div class="nav-title flex-grow-1 mx-3" style="color: #6c757d;">
                 {{ questionText }}
               </div>
               <!-- Action Button -->
@@ -72,7 +72,6 @@
                 </div>
               </div>
             </div>
-
           </div>
           <!-- <h1>{{ totalFingerCount }}</h1>
           <h1>{{ handCount }}</h1> -->
@@ -86,6 +85,7 @@
               :class="{ 'clicked': currentQuestionIndex === index }" @click="handleClick(question.question_id)">
               <span class="question-number fs-3">{{ index < 9 ? '0' + (index + 1) : index + 1 }}</span>
                   <span class="question-text">{{ question.questionText }}</span>
+                  <i class='bx bxs-x-circle close-icon' style="z-index: 1;color: #ff355b;"></i>
             </li>
           </ul>
           <div class="next-previous-container">
@@ -93,14 +93,14 @@
               <div class="row g-2">
                 <div class="col">
                   <button type="button" class="p-2 btn previous-button" @click="previousQuestion">
-                    <i class='bx bx-chevrons-left' style="font-size: 20px;"></i>
-                    <span style="margin-left: 5px;font-size: 15px;">Previous</span>
+                    <i class='bx bx-chevrons-left' style="font-size: 20px;color: white;"></i>
+                    <span style="margin-left: 5px;font-size: 15px;color: white;">Previous</span>
                   </button>
                 </div>
                 <div class="col">
                   <button type="button" class="p-2 btn next-button" @click="nextQuestion">
-                    <span style="margin-right: 5px;font-size: 15px;">Next</span>
-                    <i class='bx bx-chevrons-right' style="font-size: 20px;"></i>
+                    <span style="margin-right: 5px;font-size: 15px;color: white;">Next</span>
+                    <i class='bx bx-chevrons-right' style="font-size: 20px;color: white;"></i>
                   </button>
                 </div>
               </div>
@@ -376,7 +376,10 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+* {
+  font-family: "Jost", sans-serif;
+  color: #6c757d;
+}
 
 .gamePageContainer {
   height: 100vh;
@@ -493,6 +496,7 @@ export default {
   /* Add border-radius to the transition */
   border-radius: 10px;
   /* Adjust the border-radius as needed */
+  border: 2px solid #e0e0e0;
   padding: 10px;
   overflow: hidden;
   /* Ensure the overflow content is hidden */
@@ -528,21 +532,21 @@ export default {
 
 .question-item::after {
   content: '';
-  width: 30%;
+  width: 100%;
   /* Cover the full width of the .question-item */
   height: 100%;
   position: absolute;
   right: 0;
   top: 0;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0) 40%, rgb(255, 255, 255) 100%);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 50%, rgb(255, 255, 255) 95%);
   /* Gradient fade effect */
 }
 
 .question-item.clicked::after {
   /* Only change what is different when clicked */
   background-color: #e0e0e0;
-  width: 0%;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 0%);
+  width: 100%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 50%, rgb(255, 255, 255) 100%);
 }
 
 .question-number {
@@ -564,6 +568,7 @@ export default {
 .answer-A {
   background-color: #f1f2fe;
   color: #727cf5;
+  border: 1px solid #f1f2fe;
 }
 
 
@@ -616,24 +621,28 @@ export default {
   /* Apply hover color on unchecked state only */
   background-color: #727cf5;
   color: #f1f2fe;
+  border: 1px solid #727cf5;
 }
 
 #ansB:checked+.answer-B,
 #ansB:not(:checked)+.answer-B:hover {
   background-color: #ffd37b;
   color: #fff9ef;
+  border: 1px solid #ffd37b;
 }
 
 #ansC:checked+.answer-C,
 #ansC:not(:checked)+.answer-C:hover {
   background-color: #0acf97;
   color: #e7faf5;
+  border: 1px solid #0acf97;
 }
 
 #ansD:checked+.answer-D,
 #ansD:not(:checked)+.answer-D:hover {
   background-color: #39b6dd;
   color: #ebf7fa;
+  border: 1px solid #39b6dd;
 }
 
 .next-previous-container {
@@ -644,7 +653,6 @@ export default {
   align-items: center;
   width: 100%;
   box-shadow: 0px 0px 35px 0px rgba(154, 161, 171, 0.15);
-  background-color: #ced4da;
 }
 
 .previous-button {

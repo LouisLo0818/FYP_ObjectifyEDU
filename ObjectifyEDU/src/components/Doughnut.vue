@@ -96,7 +96,7 @@ export default {
 <style scoped>
 * {
   font-family: "Jost", sans-serif;
-  color: #4c5f71;
+  color: #6c757d;
 }
 
 .chart-container {

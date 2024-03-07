@@ -135,6 +135,11 @@ export default {
 </script>
 
 <style scoped>
+* {
+  font-family: "Jost", sans-serif;
+  color: #6c757d;
+}
+
 html body {
   width: 100%;
   height: 100%;
