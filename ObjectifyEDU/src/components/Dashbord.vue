@@ -30,7 +30,7 @@
                 background-color: #ffffff;
                 border-radius: 8px;
                 height: 100%;
-                8px; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+                box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
               ">
               <div style="display: flex; align-items: center; height: 100%">
                 <ul class="subject">
@@ -51,7 +51,7 @@
                 background-color: #ffffff;
                 border-radius: 8px;
                 height: 100%;
-                8px; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+                box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
               ">
               <div style="display: flex; align-items: center; height: 100%">
                 <ul class="subject">
@@ -72,7 +72,7 @@
                 background-color: #ffffff;
                 border-radius: 8px;
                 height: 100%;
-                8px; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+                box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
               ">
               <div style="display: flex; align-items: center; height: 100%">
                 <ul class="subject">
@@ -107,31 +107,23 @@
               </div>
             </div>
           </div>
-          <div class="col">
+          <div class="col" style="height: 15rem;">
             <div class="card h-100"
               style="border: none;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;">
               <h4 class="card-header" style="background: #ffffff;border-bottom: none;">Ranking</h4>
-              <div class="ranking-container">
+              <div class="ranking-container" style="overflow: scroll;scrollbar-width: none;">
                 <table class="table table-hover">
                   <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Cell</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>Cell</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td>Cell</td>
+                    <tr v-for="(name, index) in userName" :key="index">
+                      <th scope="row">{{ index + 1 }}</th>
+                      <td>{{ name }}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
-          <div class="col">
+          <div class="col" style="height: 15rem;">
             <div class="card h-100"
               style="border: none;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;">
               <h4 class="card-header" style="background: #ffffff;border-bottom: none;">Awards</h4>
@@ -154,20 +146,26 @@ export default {
     Doughnut,
   },
   data() {
-    return {};
+    return {
+      userName: [],
+    };
   },
   mounted() {
     this.fetchData();
+    this.fetchRanking();
   },
   methods: {
     async fetchData() {
       try {
         const stuid = localStorage.getItem("student_id");
         const token = localStorage.getItem("user");
+        const class_name = localStorage.getItem("class_name");
 
         const stuidInput = {
           stuid: stuid,
         };
+
+        console.log(stuidInput);
 
         const response = await fetch("/api/Process", {
           method: "POST",
@@ -184,6 +182,7 @@ export default {
         }
 
         const jsonData = await response.json();
+
         var lis = [
           jsonData.Social,
           jsonData.Math,
@@ -240,6 +239,40 @@ export default {
         console.error("Error fetching data:", error);
       }
     },
+    async fetchRanking() {
+      try {
+        const token = localStorage.getItem("user");
+        const class_name = localStorage.getItem("class_name");
+
+        const classInput = {
+          class_name: class_name,
+        };
+
+        console.log(classInput);
+
+        const response = await fetch("/api/Class", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(classInput),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const jsonData = await response.json();
+
+        this.userName = jsonData.map((item) => item.username);
+        console.log(this.userName);
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
   },
 };
 </script>
@@ -249,7 +282,7 @@ export default {
 html,
 body {
   width: 100%;
-  height: 100%;
+  height: auto;
   margin: 0;
   padding: 0;
   background-color: #f5f5f9;
@@ -338,7 +371,6 @@ body {
 /* Ranking table styles */
 .ranking-container {
   width: 93%;
-  margin: 0 auto;
-  overflow: hidden;
+  margin: 10px auto;
 }
 </style>
