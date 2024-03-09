@@ -316,7 +316,7 @@ body {
 /* Main content area */
 .main {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background-color: #f5f5f9;
   padding-left: 260px;
   /* Removed the commented code */
