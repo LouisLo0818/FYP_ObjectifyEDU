@@ -32,7 +32,7 @@
               <div class="row gx-3 gy-3 row-cols-2" v-if="questions.length > currentQuestionIndex">
                 <div class="col">
                   <div class="input-group flex-nowrap">
-                    <input type="radio" class="btn-check" name="btnradio" id="ansA" autocomplete="off">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansA" :value="options[currentQuestionIndex][0]" autocomplete="off">
                     <label class="btn answer-button answer-A" for="ansA"
                       style="border-radius: 0.357rem 0 0 0.357rem;">A</label>
                     <!-- Bind the placeholder to the option at the current index -->
@@ -42,7 +42,7 @@
                 </div>
                 <div class="col">
                   <div class="input-group flex-nowrap">
-                    <input type="radio" class="btn-check" name="btnradio" id="ansB" autocomplete="off">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansB" :value="options[currentQuestionIndex][1]" autocomplete="off">
                     <label class="btn answer-button answer-B" for="ansB"
                       style="border-radius: 0.357rem 0 0 0.357rem;">B</label>
                     <!-- Bind the placeholder to the option at the current index -->
@@ -52,7 +52,7 @@
                 </div>
                 <div class="col">
                   <div class="input-group flex-nowrap">
-                    <input type="radio" class="btn-check" name="btnradio" id="ansC" autocomplete="off">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansC" :value="options[currentQuestionIndex][2]" autocomplete="off">
                     <label class="btn answer-button answer-C" for="ansC"
                       style="border-radius: 0.357rem 0 0 0.357rem;">C</label>
                     <!-- Bind the placeholder to the option at the current index -->
@@ -62,7 +62,7 @@
                 </div>
                 <div class="col">
                   <div class="input-group flex-nowrap">
-                    <input type="radio" class="btn-check" name="btnradio" id="ansD" autocomplete="off">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansD" :value="options[currentQuestionIndex][3]" autocomplete="off">
                     <label class="btn answer-button answer-D" for="ansD"
                       style="border-radius: 0.357rem 0 0 0.357rem;">D</label>
                     <!-- Bind the placeholder to the option at the current index -->

@@ -35,7 +35,7 @@
                                         </div>
                                         <div class="lesson-time">
                                             <i class="bx bx-time">&nbsp;</i>
-                                            <span>10 hours</span>
+                                            <span>10 minutes</span>
                                         </div>
                                     </div>
                                 </div>
