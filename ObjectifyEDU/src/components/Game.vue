@@ -11,21 +11,21 @@
                     <div class="p-1">
                         <router-link to="/courses" class="btn btn-primary float-right"
                             style="width: 100px; background-color: #5753ea;">
-                            <i class='bx bx-arrow-back' style="vertical-align: middle; font-size: 20px;"></i>
-                            <span style="vertical-align: middle; font-size: 20px;">Back</span>
+                            <i class='bx bx-arrow-back'
+                                style="vertical-align: middle; font-size: 20px;color: white;"></i>
+                            <span style="vertical-align: middle; font-size: 20px;color: white;">Back</span>
                         </router-link>
                     </div>
                 </div>
             </div>
             <div class="container course-container">
-                <div class="row row-cols-1" style="margin: 0; padding: 0">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4" style="margin: 0; padding: 0">
                     <router-link v-for="(id, index) in game_id" :to="`/Courses/Games/${course_id[0]}/${id}`"
-                        style="text-decoration: none; color: inherit;padding: 0;">
+                        style="text-decoration: none; color: inherit;padding-left: 0;">
                         <div class="d-flex flex-column mb-3" style="margin: 0; padding: 0">
                             <div class="p-4 course-square">
                                 <div style="height: 50%;">
-                                    <img src="../../src/assets/img/tragicomedy.png" class="course-logo" />
-                                    <h6>{{ gameName[index] }}</h6>
+                                    <h4>{{ gameName[index] }}</h4>
                                 </div>
                                 <div style="height: 30%;">
                                     <div class="lesson-container" style="padding-top: 10px;">
@@ -115,6 +115,10 @@ export default {
 </script>
 
 <style scoped>
+* {
+    font-family: "Jost", sans-serif;
+    color: #6c757d;
+}
 
 .flex-container {
     display: flex;
@@ -123,7 +127,7 @@ export default {
 
 .main {
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background-color: #f5f5f9;
     color: #4c5f71;
     /* margin-left: 260px; */
@@ -152,7 +156,7 @@ export default {
 }
 
 .course-square {
-    height: auto;
+    height: 200px;
     border-radius: 8px;
     background-color: #ffffff;
     transition: box-shadow 0.3s;

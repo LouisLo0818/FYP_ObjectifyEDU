@@ -85,7 +85,8 @@
               :class="{ 'clicked': currentQuestionIndex === index }" @click="handleClick(question.question_id)">
               <span class="question-number fs-3">{{ index < 9 ? '0' + (index + 1) : index + 1 }}</span>
                   <span class="question-text">{{ question.questionText }}</span>
-                  <i class='bx bxs-x-circle close-icon' style="z-index: 1;color: #ff355b;"></i>
+                  <i class='bx bxs-x-circle wrong-icon'></i>
+                  <!-- <i class='bx bxs-check-circle correct-icon'></i> -->
             </li>
           </ul>
           <div class="next-previous-container">
@@ -683,5 +684,17 @@ export default {
   background-color: #fa5c7c !important;
   /* Keep the same color on click for Next */
   color: white !important;
+}
+
+.wrong-icon {
+  color: #ff355b;
+  margin-left: auto;
+  z-index: 1;
+}
+
+.correct-icon {
+  color: #47d764;
+  margin-left: auto;
+  z-index: 1;
 }
 </style>

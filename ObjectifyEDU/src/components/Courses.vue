@@ -10,7 +10,7 @@
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
           <router-link v-for="(id, index) in  course_id " :to="`/Courses/Games/${id}`"
             style="text-decoration: none; color: inherit;">
-            <div class="d-flex flex-column" style="margin: 0; padding: 0">
+            <div class="d-flex flex-column" style="margin: 0; padding: 0;">
               <div class="p-4 course-square">
                 <div style="height: 70%;">
                   <img :src="course_img[index]" class="course-logo" />
