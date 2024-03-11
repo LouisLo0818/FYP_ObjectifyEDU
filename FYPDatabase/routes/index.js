@@ -70,6 +70,30 @@ router.post("/api/login", async function (req, res) {
   }
 });
 
+router.post("/api/Student", async function (req, res) {
+  // Assuming 'verifyToken' is a middleware that validates the token and attaches the user to 'req'
+
+  const query = { student_id: req.body.student_id }; // Access query parameters with 'req.query'
+
+  try {
+    let accountRecords = await client
+      .db("eLearning")
+      .collection("Student")
+      .find(query) // Assuming 'query' is defined and valid for your collection structure
+      .toArray();
+
+    if (!accountRecords || accountRecords.length === 0) {
+      return res.status(404).send("No account records found.");
+    }
+
+    console.log(accountRecords);
+    return res.json(accountRecords);
+  } catch (error) {
+    console.error("Error fetching account records:", error);
+    return res.status(500).send("Internal Server Error");
+  }
+});
+
 router.post("/api/Class", async function (req, res) {
   // Assuming 'verifyToken' is a middleware that validates the token and attaches the user to 'req'
   const query = { class_name: req.body.class_name }; // Access query parameters with 'req.query'

@@ -32,10 +32,10 @@
                   <div class="progress-container">
                     <div class="progress progress-height">
                       <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                        style="width: 0%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
-                        aria-valuemax="100"></div>
+                        :style="`width: ${SEDbar[index]}%; background-color: #ffab00`" aria-valuenow="25"
+                        aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    <span>{{ SEDbar }}</span>
+                    <span>{{ SEDbar[index] }}%</span>
                   </div>
                 </div>
               </div>
@@ -43,37 +43,6 @@
           </router-link>
         </div>
       </div>
-      <!-- <div class="container course-container">
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 g-lg-4">
-          <router-link v-for="(id, index) in  course_id " :to="`/Courses/Games/${id}`"
-            style="text-decoration: none; color: inherit;">
-            <div class="col">
-              <div class="p-4 course-square">
-                <img :src="course_img[index]" class="course-logo" />
-                <h6>{{ course_name[index] }}</h6>
-                <div class="lesson-container">
-                  <div class="lesson-number">
-                    <i class="bx bx-book-open">&nbsp;</i>
-                    <span>{{ lessons[index] }} Lessons</span>
-                  </div>
-                  <div class="lesson-time">
-                    <i class="bx bx-time">&nbsp;</i>
-                    <span>{{ time[index] }} hours</span>
-                  </div>
-                </div>
-                <div class="progress-container">
-                  <div class="progress progress-height">
-                    <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                      style="width: 0%; background-color: #ffab00" aria-valuenow="25" aria-valuemin="0"
-                      aria-valuemax="100"></div>
-                  </div>
-                  <span>{{ SEDbar }}</span>
-                </div>
-              </div>
-            </div>
-          </router-link>
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -81,8 +50,8 @@
 export default {
   data() {
     return {
-      SEDbar: "",
-      course_id: [],
+      SEDbar: [],
+      course_id: {},
       course_name: [],
       time: [],
       course_img: [],
@@ -90,9 +59,6 @@ export default {
     };
   },
   mounted() {
-    // Get the element
-    //const SEDbar = document.getElementById("SEDbar");
-    //this.SEDbar = SEDbar.style.width;
     this.fetchCourseId();
   },
   methods: {
@@ -125,7 +91,53 @@ export default {
         console.log(this.time);
         console.log(this.course_img);
         console.log(this.lessons);
-        console.log(jsonData);
+
+        const stuid = localStorage.getItem("student_id");
+
+        const stuidInput = {
+          student_id: stuid,
+        };
+
+        // --------------------------------------------- student table API --------------------------------------------- //
+
+        const studentResponse = await fetch("/api/Student", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(stuidInput),
+        });
+
+        if (!studentResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const jsonData2 = await studentResponse.json();
+
+        const courseInfo = jsonData2.map((item) => item.courses);
+        const course_id = courseInfo[0].map(item => item.course_id);
+        const gameInfo = courseInfo[0].map((item) => item.games);
+        const game_id = gameInfo.map((item) => item.map((game) => game.game_id));
+        const is_finish = gameInfo.map((item) => item.map((game) => game.questions.map((question) => question.is_correct).length));
+
+        console.log(course_id);
+        console.log(gameInfo);
+        console.log(game_id);
+        console.log(is_finish);
+
+        for (let i = 0; i < this.course_id.length; i++) {
+          if (course_id.includes(this.course_id[i])) {
+            this.SEDbar[i] = is_finish[0][0];
+            is_finish.shift();
+          } else {
+            this.SEDbar[i] = 0;
+          }
+        }
+
+        console.log(this.SEDbar);
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -225,6 +237,7 @@ html body {
 .progress-container {
   display: flex;
   align-items: center;
+  margin-top: -5px;
 }
 
 .progress-height {
