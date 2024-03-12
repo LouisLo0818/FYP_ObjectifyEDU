@@ -151,6 +151,7 @@ export default {
   mounted() {
     this.initializeMediaPipe();
     this.fetchGameInfo();
+    this.autoSelectAnswer();
     // Call the method to set the initial size based on the current container width
     this.setCanvasSize();
     // Add event listener to call setCanvasSize on window resize
@@ -415,6 +416,22 @@ export default {
       this.videoWidth = width;
       this.videoHeight = height * 0.7;
     },
+    autoSelectAnswer() {
+      // This function will be called whenever totalFingerCount changes
+      const radioButtons = document.querySelectorAll(`input[name="btnradio"]`);
+
+      // Uncheck all if totalFingerCount is 0
+      if (this.totalFingerCount === 0) {
+        radioButtons.forEach((radio) => {
+          radio.checked = false;
+        });
+      } else {
+        // Check the radio button that matches totalFingerCount
+        radioButtons.forEach((radio) => {
+          radio.checked = radio.value == this.totalFingerCount;
+        });
+      }
+    },
   },
 
   //------------------------------------------------------------------------------------------------------------//
@@ -426,7 +443,10 @@ export default {
       if (newQuestions.length > 0) {
         this.questionText = newQuestions[0].questionText;
       }
-    }
+    },
+    totalFingerCount() {
+      this.autoSelectAnswer();
+    },
   },
 };
 </script>
@@ -739,5 +759,17 @@ export default {
   background-color: #fa5c7c !important;
   /* Keep the same color on click for Next */
   color: white !important;
+}
+
+.wrong-icon {
+  color: #ff355b;
+  margin-left: auto;
+  z-index: 1;
+}
+
+.correct-icon {
+  color: #47d764;
+  margin-left: auto;
+  z-index: 1;
 }
 </style>
