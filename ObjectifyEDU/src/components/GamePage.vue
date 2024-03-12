@@ -32,7 +32,8 @@
               <div class="row gx-3 gy-3 row-cols-2" v-if="questions.length > currentQuestionIndex">
                 <div class="col">
                   <div class="input-group flex-nowrap">
-                    <input type="radio" class="btn-check" name="btnradio" id="ansA" :value="options[currentQuestionIndex][0]" autocomplete="off">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansA"
+                      :value="options[currentQuestionIndex][0]" autocomplete="off">
                     <label class="btn answer-button answer-A" for="ansA"
                       style="border-radius: 0.357rem 0 0 0.357rem;">A</label>
                     <!-- Bind the placeholder to the option at the current index -->
@@ -42,7 +43,8 @@
                 </div>
                 <div class="col">
                   <div class="input-group flex-nowrap">
-                    <input type="radio" class="btn-check" name="btnradio" id="ansB" :value="options[currentQuestionIndex][1]" autocomplete="off">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansB"
+                      :value="options[currentQuestionIndex][1]" autocomplete="off">
                     <label class="btn answer-button answer-B" for="ansB"
                       style="border-radius: 0.357rem 0 0 0.357rem;">B</label>
                     <!-- Bind the placeholder to the option at the current index -->
@@ -52,7 +54,8 @@
                 </div>
                 <div class="col">
                   <div class="input-group flex-nowrap">
-                    <input type="radio" class="btn-check" name="btnradio" id="ansC" :value="options[currentQuestionIndex][2]" autocomplete="off">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansC"
+                      :value="options[currentQuestionIndex][2]" autocomplete="off">
                     <label class="btn answer-button answer-C" for="ansC"
                       style="border-radius: 0.357rem 0 0 0.357rem;">C</label>
                     <!-- Bind the placeholder to the option at the current index -->
@@ -62,7 +65,8 @@
                 </div>
                 <div class="col">
                   <div class="input-group flex-nowrap">
-                    <input type="radio" class="btn-check" name="btnradio" id="ansD" :value="options[currentQuestionIndex][3]" autocomplete="off">
+                    <input type="radio" class="btn-check" name="btnradio" id="ansD"
+                      :value="options[currentQuestionIndex][3]" autocomplete="off">
                     <label class="btn answer-button answer-D" for="ansD"
                       style="border-radius: 0.357rem 0 0 0.357rem;">D</label>
                     <!-- Bind the placeholder to the option at the current index -->
@@ -85,7 +89,7 @@
               :class="{ 'clicked': currentQuestionIndex === index }" @click="handleClick(question.question_id)">
               <span class="question-number fs-3">{{ index < 9 ? '0' + (index + 1) : index + 1 }}</span>
                   <span class="question-text">{{ question.questionText }}</span>
-                  <i class='bx bxs-x-circle wrong-icon'></i>
+                  <i></i>
                   <!-- <i class='bx bxs-check-circle correct-icon'></i> -->
             </li>
           </ul>
@@ -293,31 +297,82 @@ export default {
         }
 
         const jsonData = await response.json();
-
         const courseId = this.$route.params.id; // Adjust the param key based on your route setup
         const courseInfo = jsonData.find(course => course.course_id === courseId);
-
-        if (!courseInfo) {
-          console.error("Course not found");
-          return;
-        }
-
-        // Now filter the games array within the course
         const gameInfo = courseInfo.games.find(game => game.game_id === this.$route.params.gameId);
-
-        if (!gameInfo) {
-          console.error("Game not found");
-          return;
-        }
 
         this.game_id = gameInfo.game_id;
         this.gameName = gameInfo.gameName;
         this.questions = gameInfo.questions;
+        console.log(this.questions);
+
+        const question_id = this.questions.map((question) => question.question_id);
 
         this.options = this.questions.map((question) => question.options);
-        console.log(this.options);
         this.correctOption = this.questions.map((question) => question.correctOption);
+
+        console.log(question_id);
+        console.log(this.options);
         console.log(this.correctOption);
+
+        // --------------------------------------------- student table API --------------------------------------------- //
+
+        const stuid = localStorage.getItem("student_id");
+
+        const stuidInput = {
+          student_id: stuid,
+        };
+
+        const studentResponse = await fetch("/api/Student", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(stuidInput),
+        });
+
+        if (!studentResponse.ok) {
+          throw new Error("Failed to fetch the student data");
+        }
+
+        const jsonData2 = await studentResponse.json();
+        const courseInfo2 = jsonData2.map((item) => item.courses.filter((course) => course.course_id === courseId));
+        const gameInfo2 = courseInfo2[0].map((item) => item.games.filter((game) => game.game_id === this.$route.params.gameId));
+        const game_id = gameInfo2.map((item) => item.map((game) => game.game_id));
+        const questions = gameInfo2.map((item) => item.map((item) => item.questions.map((item) => {
+          return {
+            question_id: item.question_id,
+            is_correct: item.is_correct,
+          }
+        })));
+
+        this.tmp = questions[0][0];
+
+        console.log(questions);
+
+        for (let i = 0; i < question_id.length; i++) {
+
+          const questionObj = questions[0][0].find(q => q.question_id === question_id[i]);
+          console.log(questionObj);
+
+          if (questionObj) {
+            const iconElement = document.getElementsByClassName("question-item")[i].getElementsByTagName('i')[0];
+            if (questionObj.is_correct) {
+              iconElement.innerHTML = "<i class='bx bxs-check-circle'></i>";
+              iconElement.style.color = "#47d764";
+              iconElement.style.marginLeft = "auto";
+              iconElement.style.zIndex = 1;
+            } else {
+              iconElement.innerHTML = "<i class='bx bxs-x-circle'></i>";
+              iconElement.style.color = "#ff355b";
+              iconElement.style.marginLeft = "auto";
+              iconElement.style.zIndex = 1;
+            }
+          }
+        }
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -684,17 +739,5 @@ export default {
   background-color: #fa5c7c !important;
   /* Keep the same color on click for Next */
   color: white !important;
-}
-
-.wrong-icon {
-  color: #ff355b;
-  margin-left: auto;
-  z-index: 1;
-}
-
-.correct-icon {
-  color: #47d764;
-  margin-left: auto;
-  z-index: 1;
 }
 </style>
