@@ -27,7 +27,7 @@
                                 <div style="height: 50%;">
                                     <h4>{{ gameName[index] }}</h4>
                                 </div>
-                                <div style="height: 30%;">
+                                <div style="height: 30%;margin-top: 20px;">
                                     <div class="lesson-container" style="padding-top: 10px;">
                                         <div class="lesson-number">
                                             <i class="bx bx-book-open">&nbsp;</i>
@@ -43,10 +43,11 @@
                                     <div class="progress-container">
                                         <div class="progress progress-height">
                                             <div id="SEDbar" class="progress-bar" role="progressbar"
-                                                aria-label="Basic example" style="width: 30%; background-color: #ffab00"
+                                                aria-label="Basic example"
+                                                :style="`width: ${SEDbar[index]}%; background-color: #ffab00`"
                                                 aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
-                                        <span>{{ SEDbar }}</span>
+                                        <span>{{ SEDbar[index] }}%</span>
                                     </div>
                                 </div>
                             </div>
@@ -62,7 +63,7 @@
 export default {
     data() {
         return {
-            SEDbar: "",
+            SEDbar: [],
             game_id: [],
             gameName: [],
             course_id: [],
@@ -70,9 +71,6 @@ export default {
         };
     },
     mounted() {
-        // Get the element
-        //const SEDbar = document.getElementById("SEDbar");
-        //this.SEDbar = SEDbar.style.width;
         this.fetchCourseId();
     },
     methods: {
@@ -93,19 +91,57 @@ export default {
                 }
 
                 const jsonData = await response.json();
-                // get jsonData course_id is "SE001" equal the URL :id
                 const course_info = jsonData.filter((course) => course.course_id === this.$route.params.id);
-
                 this.course_id = course_info.map((course) => course.course_id);
-                // get the game object related the course_id
                 const game = course_info[0].games;
-
                 this.game_id = game.map((game) => game.game_id);
                 this.gameName = game.map((game) => game.gameName);
 
                 console.log(this.course_id);
                 console.log(this.game_id);
                 console.log(this.gameName);
+
+                // --------------------------------------------- student table API --------------------------------------------- //
+
+                const stuid = localStorage.getItem("student_id");
+
+                const stuidInput = {
+                    student_id: stuid,
+                };
+
+                const studentResponse = await fetch("/api/Student", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        // Include the token in the Authorization header
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(stuidInput),
+                });
+
+                if (!studentResponse.ok) {
+                    throw new Error("Failed to fetch the student data");
+                }
+
+                const jsonData2 = await studentResponse.json();
+                const courseInfo = jsonData2.map((item) => item.courses.filter((course) => course.course_id === this.$route.params.id));
+                const gameInfo = courseInfo[0].map((item) => item.games);
+                const game_id = gameInfo.map((item) => item.map((game) => game.game_id));
+                const game_progress = gameInfo.map((item) => item.map((item) => item.questions.map((item) => item.is_correct).length));
+                console.log(game_id);
+                console.log(game_progress);
+
+                for (let i = 0; i < this.game_id.length; i++) {
+                    if (game_id[0].includes(this.game_id[i])) {
+                        this.SEDbar[i] = game_progress[0][0];
+                        game_progress.shift();
+                    } else {
+                        this.SEDbar[i] = 0;
+                    }
+                }
+
+                console.log(this.SEDbar);
+
             } catch (error) {
                 console.error("Error fetching data:", error);
             }

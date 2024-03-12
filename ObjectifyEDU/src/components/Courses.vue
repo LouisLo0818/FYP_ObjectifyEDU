@@ -92,13 +92,13 @@ export default {
         console.log(this.course_img);
         console.log(this.lessons);
 
+        // --------------------------------------------- student table API --------------------------------------------- //
+
         const stuid = localStorage.getItem("student_id");
 
         const stuidInput = {
           student_id: stuid,
         };
-
-        // --------------------------------------------- student table API --------------------------------------------- //
 
         const studentResponse = await fetch("/api/Student", {
           method: "POST",
