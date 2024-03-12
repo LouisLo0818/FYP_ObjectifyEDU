@@ -44,10 +44,10 @@
                                         <div class="progress progress-height">
                                             <div id="SEDbar" class="progress-bar" role="progressbar"
                                                 aria-label="Basic example"
-                                                :style="`width: ${SEDbar[index]}%; background-color: #ffab00`"
+                                                :style="`width: ${SEDbar[index] * 10}%; background-color: #ffab00`"
                                                 aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
-                                        <span>{{ SEDbar[index] }}%</span>
+                                        <span>{{ SEDbar[index] * 10 }}%</span>
                                     </div>
                                 </div>
                             </div>

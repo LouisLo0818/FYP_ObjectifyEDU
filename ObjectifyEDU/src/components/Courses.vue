@@ -32,10 +32,10 @@
                   <div class="progress-container">
                     <div class="progress progress-height">
                       <div id="SEDbar" class="progress-bar" role="progressbar" aria-label="Basic example"
-                        :style="`width: ${SEDbar[index]}%; background-color: #ffab00`" aria-valuenow="25"
+                        :style="`width: ${SEDbar[index] * 2}%; background-color: #ffab00`" aria-valuenow="25"
                         aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    <span>{{ SEDbar[index] }}%</span>
+                    <span>{{ SEDbar[index] * 2 }}%</span>
                   </div>
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default {
         });
 
         if (!studentResponse.ok) {
-          throw new Error("Failed to fetch data");
+          throw new Error("Failed to fetch the student data");
         }
 
         const jsonData2 = await studentResponse.json();
