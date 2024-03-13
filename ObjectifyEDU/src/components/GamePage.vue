@@ -77,8 +77,8 @@
               </div>
             </div>
           </div>
-          <!-- <h1>{{ totalFingerCount }}</h1>
-          <h1>{{ handCount }}</h1> -->
+          <h1>{{ totalFingerCount }}</h1>
+          <h1>{{ handCount }}</h1>
         </div>
         <div class="col-3 course-content">
           <div style="display: flex;justify-content: center;align-items: center;height: 10%;">
@@ -89,7 +89,7 @@
               :class="{ 'clicked': currentQuestionIndex === index }" @click="handleClick(question.question_id)">
               <span class="question-number fs-3">{{ index < 9 ? '0' + (index + 1) : index + 1 }}</span>
                   <span class="question-text">{{ question.questionText }}</span>
-                  <i></i>
+                  <i style="margin-top: 5px;"></i>
                   <!-- <i class='bx bxs-check-circle correct-icon'></i> -->
             </li>
           </ul>
@@ -154,30 +154,9 @@ export default {
     this.autoSelectAnswer();
     // Call the method to set the initial size based on the current container width
     this.setCanvasSize();
+    // this.startCountdown();
     // Add event listener to call setCanvasSize on window resize
     window.addEventListener('resize', this.setCanvasSize);
-    //  # this.setCanvasContainer();
-    //  # window.addEventListener('resize', this.setCanvasContainer);
-    // const startTime = Date.now();
-    // const duration = 5000; // 5 seconds
-
-    // this.interval = setInterval(() => {
-    //   const elapsedTime = Date.now() - startTime;
-    //   this.progressBarWidth = 100 - (elapsedTime / duration) * 100;
-
-    //   if (elapsedTime >= duration) {
-    //     clearInterval(this.interval);
-    //     this.progressBarWidth = 0;
-    //     // show alert box
-    //     if (this.totalFingerCount !== this.answer) {
-    //       alert("Wrong! Your answer is " + this.totalFingerCount);
-    //       window.location.reload();
-    //     } else {
-    //       alert("Correct! Your answer is " + this.totalFingerCount);
-    //       window.location.reload();
-    //     }
-    //   }
-    // }, 1); // Update every 100ms for a smoother animation
   },
   beforeDestroy() {
     // Clear the interval when the component is destroyed
@@ -186,6 +165,28 @@ export default {
     //  # window.removeEventListener('resize', this.setCanvasContainer);
   },
   methods: {
+    // startCountdown() {
+    //   const startTime = Date.now();
+    //   const duration = 10000; // 10 seconds
+
+    //   this.interval = setInterval(() => {
+    //     const elapsedTime = Date.now() - startTime;
+    //     this.progressBarWidth = 100 - (elapsedTime / duration) * 100;
+
+    //     if (elapsedTime >= duration) {
+    //       clearInterval(this.interval);
+    //       this.progressBarWidth = 0;
+    //       // show alert box
+    //       if (this.totalFingerCount !== this.answer) {
+    //         alert("Wrong! Your answer is " + this.totalFingerCount);
+    //         window.location.reload();
+    //       } else {
+    //         alert("Correct! Your answer is " + this.totalFingerCount);
+    //         window.location.reload();
+    //       }
+    //     }
+    //   }, 1); // Update every 100ms for a smoother animation
+    // },
     initializeMediaPipe() {
       const videoElement = this.$refs.videoElement;
       const canvasElement = this.$refs.canvasElement;
@@ -238,31 +239,88 @@ export default {
     countFingers(landmarks) {
       let fingerCount = 0;
       const isLeftHand = this.determineHandType(landmarks) === 'Left';
+      let right_hand = { right_6: false, right_8: false, right_7: false, right_9: false };
 
-      // Thumb
-      if ((isLeftHand && landmarks[4].x > landmarks[3].x) || (!isLeftHand && landmarks[4].x < landmarks[3].x)) {
-        fingerCount += 1;
+      // spical gesture right(7) 
+      if ((!isLeftHand && landmarks[0].y < landmarks[5].y) && (!isLeftHand && landmarks[0].y < landmarks[9].y) && (!isLeftHand && landmarks[0].y < landmarks[13].y) && (!isLeftHand && landmarks[0].y < landmarks[17].y)) {
+        if ((!isLeftHand && landmarks[4].x < landmarks[3].x) && (!isLeftHand && landmarks[7].y < landmarks[8].y) && (!isLeftHand && landmarks[12].y < landmarks[10].y) && (!isLeftHand && landmarks[16].y < landmarks[14].y) && (!isLeftHand && landmarks[20].y < landmarks[18].y)) {
+          fingerCount += 7;
+        }
       }
-      // Index Finger
-      if (landmarks[8].y < landmarks[6].y) {
-        fingerCount += 1;
+
+      // spical gesture right(6)
+      if ((!isLeftHand && landmarks[5].y < landmarks[0].y) && (!isLeftHand && landmarks[9].y < landmarks[0].y) && (!isLeftHand && landmarks[13].y < landmarks[0].y)) {
+        if ((!isLeftHand && landmarks[4].x < landmarks[3].x) && (!isLeftHand && landmarks[3].x < landmarks[2].x) && (!isLeftHand && landmarks[20].y < landmarks[19].y) && (!isLeftHand && landmarks[19].y < landmarks[17].y) && (!isLeftHand && landmarks[6].y < landmarks[8].y) && (!isLeftHand && landmarks[10].y < landmarks[12].y) && (!isLeftHand && landmarks[14].y < landmarks[16].y)) {
+          fingerCount += 6;
+          right_hand.right_6 = true;
+        }
       }
-      // Middle Finger  
-      if (landmarks[12].y < landmarks[10].y) {
-        fingerCount += 1;
+
+      // spical gesture right(8)
+      if ((!isLeftHand && landmarks[5].y < landmarks[0].y) && (!isLeftHand && landmarks[4].x < landmarks[3].x) && (!isLeftHand && landmarks[8].y < landmarks[7].y) && (!isLeftHand && landmarks[12].y < landmarks[11].y) && (!isLeftHand && landmarks[14].y < landmarks[15].y) && (!isLeftHand && landmarks[18].y < landmarks[19].y)) {
+        fingerCount += 8;
+        right_hand.right_8 = true;
       }
-      // Ring Finger
-      if (landmarks[16].y < landmarks[14].y) {
-        fingerCount += 1;
+
+      // spical gesture right(9)
+      if ((!isLeftHand && landmarks[6].x < landmarks[0].x) && (!isLeftHand && landmarks[10].x < landmarks[0].x) && (!isLeftHand && landmarks[14].x < landmarks[0].x) && (!isLeftHand && landmarks[18].x < landmarks[0].x)) {
+        if ((!isLeftHand && landmarks[10].y < landmarks[11].y) && (!isLeftHand && landmarks[14].y < landmarks[15].y) && (!isLeftHand && landmarks[18].y < landmarks[19].y)) {
+          if ((!isLeftHand && landmarks[7].x < landmarks[6].x) && (!isLeftHand && landmarks[8].x < landmarks[7].x) && (!isLeftHand && landmarks[7].y < landmarks[8].y)) {
+            fingerCount += 9;
+            right_hand.right_9 = true;
+          }
+        }
       }
-      // Pinky
-      if (landmarks[20].y < landmarks[18].y) {
-        fingerCount += 1;
+
+      // supose all hand direction is up
+      if ((isLeftHand && landmarks[0].y > landmarks[5].y) || (!isLeftHand && landmarks[5].y < landmarks[0].y)) {
+        // Thumb
+        if ((isLeftHand && landmarks[4].x > landmarks[3].x) || (!isLeftHand && landmarks[4].x < landmarks[3].x)) {
+          if (right_hand.right_8 || right_hand.right_6 || right_hand.right_9) {
+            fingerCount += 0;
+          } else {
+            right_hand.right_8 = false;
+            right_hand.right_6 = false;
+            right_hand.right_9 = false;
+            fingerCount += 1;
+          }
+        }
+        // Index Finger
+        if (landmarks[8].y < landmarks[6].y) {
+          if (right_hand.right_8) {
+            fingerCount += 0;
+          } else {
+            right_hand.right_8 = false;
+            fingerCount += 1;
+          }
+        }
+        // Middle Finger  
+        if (landmarks[12].y < landmarks[10].y) {
+          if (right_hand.right_8) {
+            fingerCount += 0;
+          } else {
+            right_hand.right_8 = false;
+            fingerCount += 1;
+          }
+        }
+        // Ring Finger
+        if (landmarks[16].y < landmarks[14].y) {
+          fingerCount += 1;
+        }
+        // Pinky
+        if (landmarks[20].y < landmarks[18].y) {
+          if (right_hand.right_6) {
+            fingerCount += 0;
+          } else {
+            right_hand.right_6 = false;
+            fingerCount += 1;
+          }
+        }
       }
       return fingerCount;
     },
     determineHandType(landmarks) {
-      return landmarks[0].x < landmarks[9].x ? 'Left' : 'Right';
+      return landmarks[0].x < landmarks[1].x ? 'Left' : 'Right';
     },
     finishLesson() {
       // Stop the camera stream
@@ -486,7 +544,7 @@ export default {
 }
 
 .output_canvas {
-  border-radius: 20px;
+  border-radius: 0 0 10px 10px;
   width: 100%;
   height: 97%;
   box-shadow: 0px 0px 35px 0px rgba(154, 161, 171, 0.15);
@@ -542,6 +600,11 @@ export default {
 
 .progress {
   margin-top: 20px;
+  border-radius: 10px 10px 0 0;
+}
+
+.progress-bar {
+  transition: width 0s ease-out;
 }
 
 .course-content {
