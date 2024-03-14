@@ -240,6 +240,7 @@ export default {
       let fingerCount = 0;
       const isLeftHand = this.determineHandType(landmarks) === 'Left';
       let right_hand = { right_6: false, right_8: false, right_7: false, right_9: false };
+      let left_hand = { right_6: false, right_8: false, right_7: false, right_9: false };
 
       // spical gesture right(7) 
       if ((!isLeftHand && landmarks[0].y < landmarks[5].y) && (!isLeftHand && landmarks[0].y < landmarks[9].y) && (!isLeftHand && landmarks[0].y < landmarks[13].y) && (!isLeftHand && landmarks[0].y < landmarks[17].y)) {
@@ -272,48 +273,86 @@ export default {
         }
       }
 
+      // Special gesture left(7)
+      if (isLeftHand && landmarks[0].y < landmarks[5].y && landmarks[0].y < landmarks[9].y && landmarks[0].y < landmarks[13].y && landmarks[0].y < landmarks[17].y) {
+        if (landmarks[4].x > landmarks[3].x && landmarks[7].y < landmarks[8].y && landmarks[12].y < landmarks[10].y && landmarks[16].y < landmarks[14].y && landmarks[20].y < landmarks[18].y) {
+          fingerCount += 7 * 10;
+        }
+      }
+
+      // Special gesture left(6)
+      if (isLeftHand && landmarks[5].y < landmarks[0].y && landmarks[9].y < landmarks[0].y && landmarks[13].y < landmarks[0].y) {
+        if (landmarks[4].x > landmarks[3].x && landmarks[3].x > landmarks[2].x && landmarks[20].y < landmarks[19].y && landmarks[19].y < landmarks[17].y && landmarks[6].y < landmarks[8].y && landmarks[10].y < landmarks[12].y && landmarks[14].y < landmarks[16].y) {
+          fingerCount += 6 * 10;
+          left_hand.left_6 = true;
+        }
+      }
+
+      // special gesture left(8)
+      if ((isLeftHand && landmarks[5].y < landmarks[0].y) && (isLeftHand && landmarks[4].x > landmarks[3].x) && (isLeftHand && landmarks[8].y < landmarks[7].y) && (isLeftHand && landmarks[12].y < landmarks[11].y) && (isLeftHand && landmarks[14].y < landmarks[15].y) && (isLeftHand && landmarks[18].y < landmarks[19].y)) {
+        fingerCount += 8 * 10;
+        left_hand.left_8 = true;
+      }
+
+      // special gesture left(9)
+      if ((isLeftHand && landmarks[6].x > landmarks[0].x) && (isLeftHand && landmarks[10].x > landmarks[0].x) && (isLeftHand && landmarks[14].x > landmarks[0].x) && (isLeftHand && landmarks[18].x > landmarks[0].x)) {
+        if ((isLeftHand && landmarks[10].y < landmarks[11].y) && (isLeftHand && landmarks[14].y < landmarks[15].y) && (isLeftHand && landmarks[18].y < landmarks[19].y)) {
+          if ((isLeftHand && landmarks[7].x > landmarks[6].x) && (isLeftHand && landmarks[8].x > landmarks[7].x) && (isLeftHand && landmarks[7].y < landmarks[8].y)) {
+            fingerCount += 9 * 10;
+            left_hand.left_9 = true;
+          }
+        }
+      }
+
       // supose all hand direction is up
       if ((isLeftHand && landmarks[0].y > landmarks[5].y) || (!isLeftHand && landmarks[5].y < landmarks[0].y)) {
         // Thumb
         if ((isLeftHand && landmarks[4].x > landmarks[3].x) || (!isLeftHand && landmarks[4].x < landmarks[3].x)) {
-          if (right_hand.right_8 || right_hand.right_6 || right_hand.right_9) {
+          if (right_hand.right_8 || right_hand.right_6 || right_hand.right_9 || left_hand.left_8 || left_hand.left_6 || left_hand.left_9) {
             fingerCount += 0;
           } else {
             right_hand.right_8 = false;
             right_hand.right_6 = false;
             right_hand.right_9 = false;
-            fingerCount += 1;
+            left_hand.left_8 = false;
+            left_hand.left_6 = false;
+            left_hand.left_9 = false;
+            fingerCount += isLeftHand ? 10 : 1;
           }
         }
+
         // Index Finger
         if (landmarks[8].y < landmarks[6].y) {
-          if (right_hand.right_8) {
+          if (right_hand.right_8 || left_hand.left_8) {
             fingerCount += 0;
           } else {
             right_hand.right_8 = false;
-            fingerCount += 1;
+            left_hand.left_8 = false;
+            fingerCount += isLeftHand ? 10 : 1;
           }
         }
         // Middle Finger  
         if (landmarks[12].y < landmarks[10].y) {
-          if (right_hand.right_8) {
+          if (right_hand.right_8 || left_hand.left_8) {
             fingerCount += 0;
           } else {
             right_hand.right_8 = false;
-            fingerCount += 1;
+            left_hand.left_8 = false;
+            fingerCount += isLeftHand ? 10 : 1;
           }
         }
         // Ring Finger
         if (landmarks[16].y < landmarks[14].y) {
-          fingerCount += 1;
+          fingerCount += isLeftHand ? 10 : 1;
         }
         // Pinky
         if (landmarks[20].y < landmarks[18].y) {
-          if (right_hand.right_6) {
+          if (right_hand.right_6 || left_hand.left_6) {
             fingerCount += 0;
           } else {
             right_hand.right_6 = false;
-            fingerCount += 1;
+            left_hand.left_6 = false;
+            fingerCount += isLeftHand ? 10 : 1;
           }
         }
       }
