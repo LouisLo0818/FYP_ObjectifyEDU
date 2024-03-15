@@ -513,8 +513,6 @@ export default {
           },
           body: JSON.stringify(updateQuestion),
         });
-
-        console.log("After API, ");
         console.log(response);
 
         if (!response.ok) {
