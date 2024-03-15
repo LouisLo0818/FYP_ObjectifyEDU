@@ -136,7 +136,7 @@ export default {
       question_id: [],
       questionText: '',
       options: [],
-      correctOption: "",
+      correctOption: [],
       currentQuestionIndex: 0, // To store the index of the clicked question,
       videoWidth: 0,
       videoHeight: 0,
@@ -178,17 +178,16 @@ export default {
           clearInterval(this.interval);
           this.progressBarWidth = 0;
           // show alert box
-          if (this.totalFingerCount !== this.answer) {
+          if (this.totalFingerCount !== parseInt(this.correctOption[this.currentQuestionIndex])) {
             alert("Wrong! Your answer is " + this.totalFingerCount);
             this.is_correct = false;
             this.updateQuestion(this.is_correct);
-
-            // window.location.reload();
+            window.location.reload();
           } else {
             alert("Correct! Your answer is " + this.totalFingerCount);
             this.is_correct = true;
             this.updateQuestion(this.is_correct);
-            // window.location.reload();
+            window.location.reload();
           }
         }
       }, 1); // Update every 100ms for a smoother animation
