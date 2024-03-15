@@ -27,6 +27,8 @@
     "npm": "^10.2.5",
     "primeicons": "^4.1.0",
     "primevue": "^3.7.0",
+    "scripts": "^0.1.0",
+    "uuid": "^7.0.3",
     "vue": "^3.3.4",
     "vue-chartjs": "^5.2.0",
     "vue-router": "^4.2.4",

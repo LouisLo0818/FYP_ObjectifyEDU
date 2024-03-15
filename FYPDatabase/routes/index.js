@@ -156,4 +156,46 @@ router.get("/api/Courses", async function (req, res) {
   return res.json(courseRecords);
 });
 
+// //PUT update student question status
+router.put("/api/updateQuestion", async function (req, res) {
+  const database = client.db("eLearning");
+
+  const query = {
+    student_id: req.body.student_id,
+    "courses.games.questions.question_id":
+      req.body.courses[0].games[0].questions[0].question_id,
+  };
+
+  const update = {
+    $set: {
+      "courses.$[].games.$[].questions.$[question].is_correct":
+        req.body.courses[0].games[0].questions[0].is_correct,
+    },
+  };
+
+  const options = {
+    arrayFilters: [
+      {
+        "question.question_id":
+          req.body.courses[0].games[0].questions[0].question_id,
+      },
+    ],
+  };
+
+  try {
+    const updateQuestion = await database
+      .collection("Student")
+      .updateOne(query, update, options);
+
+    if (updateQuestion.matchedCount === 0) {
+      return res.status(404).send({ message: "No question found to update." });
+    }
+
+    return res.json(updateQuestion);
+  } catch (error) {
+    console.error("Error updating question:", error);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;

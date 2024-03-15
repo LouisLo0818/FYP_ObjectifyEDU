@@ -141,6 +141,7 @@ export default {
       videoWidth: 0,
       videoHeight: 0,
       isRadioButtonChecked: false,
+      is_correct: false,
     };
   },
   computed: {
@@ -154,7 +155,7 @@ export default {
     this.autoSelectAnswer();
     // Call the method to set the initial size based on the current container width
     this.setCanvasSize();
-    // this.startCountdown();
+    this.startCountdown();
     // Add event listener to call setCanvasSize on window resize
     window.addEventListener('resize', this.setCanvasSize);
   },
@@ -165,28 +166,33 @@ export default {
     //  # window.removeEventListener('resize', this.setCanvasContainer);
   },
   methods: {
-    // startCountdown() {
-    //   const startTime = Date.now();
-    //   const duration = 10000; // 10 seconds
+    startCountdown() {
+      const startTime = Date.now();
+      const duration = 10000; // 10 seconds
 
-    //   this.interval = setInterval(() => {
-    //     const elapsedTime = Date.now() - startTime;
-    //     this.progressBarWidth = 100 - (elapsedTime / duration) * 100;
+      this.interval = setInterval(() => {
+        const elapsedTime = Date.now() - startTime;
+        this.progressBarWidth = 100 - (elapsedTime / duration) * 100;
 
-    //     if (elapsedTime >= duration) {
-    //       clearInterval(this.interval);
-    //       this.progressBarWidth = 0;
-    //       // show alert box
-    //       if (this.totalFingerCount !== this.answer) {
-    //         alert("Wrong! Your answer is " + this.totalFingerCount);
-    //         window.location.reload();
-    //       } else {
-    //         alert("Correct! Your answer is " + this.totalFingerCount);
-    //         window.location.reload();
-    //       }
-    //     }
-    //   }, 1); // Update every 100ms for a smoother animation
-    // },
+        if (elapsedTime >= duration) {
+          clearInterval(this.interval);
+          this.progressBarWidth = 0;
+          // show alert box
+          if (this.totalFingerCount !== this.answer) {
+            alert("Wrong! Your answer is " + this.totalFingerCount);
+            this.is_correct = false;
+            this.updateQuestion(this.is_correct);
+
+            // window.location.reload();
+          } else {
+            alert("Correct! Your answer is " + this.totalFingerCount);
+            this.is_correct = true;
+            this.updateQuestion(this.is_correct);
+            // window.location.reload();
+          }
+        }
+      }, 1); // Update every 100ms for a smoother animation
+    },
     initializeMediaPipe() {
       const videoElement = this.$refs.videoElement;
       const canvasElement = this.$refs.canvasElement;
@@ -405,6 +411,7 @@ export default {
         console.log(this.questions);
 
         const question_id = this.questions.map((question) => question.question_id);
+        this.question_id = question_id;
 
         this.options = this.questions.map((question) => question.options);
         this.correctOption = this.questions.map((question) => question.correctOption);
@@ -475,6 +482,48 @@ export default {
         console.error("Error fetching data:", error);
       }
     },
+    async updateQuestion(is_correct) {
+      try {
+        const token = localStorage.getItem("user");
+
+        const updateQuestion = {
+          "student_id": localStorage.getItem("student_id"),
+          "courses": [
+            {
+              "games": [
+                {
+                  "questions": [
+                    {
+                      "question_id": this.question_id[this.currentQuestionIndex],
+                      "is_correct": is_correct // Assuming 'is_correct' is a boolean you have defined elsewhere
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        };
+
+        const response = await fetch("/api/updateQuestion", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updateQuestion),
+        });
+
+        console.log("After API, ");
+        console.log(response);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
     handleClick(questionId) {
       console.log("Clicked question ID:", questionId);
       // You can also set the currentQuestionIndex if you need to use it for other purposes
@@ -495,6 +544,7 @@ export default {
       if (this.currentQuestionIndex > 0) {
         this.currentQuestionIndex--;
         this.questionText = this.questions[this.currentQuestionIndex].questionText;
+        console.log(this.currentQuestionIndex);
       }
     },
 
