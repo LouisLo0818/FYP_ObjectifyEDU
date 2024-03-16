@@ -131,12 +131,17 @@ export default {
                 console.log(game_id);
                 console.log(game_progress);
 
-                for (let i = 0; i < this.game_id.length; i++) {
-                    if (game_id[0].includes(this.game_id[i])) {
-                        this.SEDbar[i] = game_progress[0][0];
-                        game_progress.shift();
-                    } else {
-                        this.SEDbar[i] = 0;
+                if (game_id.length === 0) {
+                    this.SEDbar = Array(this.game_id.length).fill(0);
+                    return;
+                } else {
+                    for (let i = 0; i < this.game_id.length; i++) {
+                        if (game_id[0].includes(this.game_id[i])) {
+                            this.SEDbar[i] = game_progress[0][0];
+                            game_progress.shift();
+                        } else {
+                            this.SEDbar[i] = 0;
+                        }
                     }
                 }
 
