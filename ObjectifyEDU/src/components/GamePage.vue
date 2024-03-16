@@ -129,7 +129,6 @@ export default {
       handCount: 0,
       progressBarWidth: 100,
       interval: null,
-      answer: 5,
       game_id: [],
       gameName: [],
       questions: [],
@@ -161,23 +160,29 @@ export default {
   },
   beforeDestroy() {
     // Clear the interval when the component is destroyed
-    clearInterval(this.interval);
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
     window.removeEventListener('resize', this.setCanvasSize);
     //  # window.removeEventListener('resize', this.setCanvasContainer);
   },
   methods: {
     startCountdown() {
+      // Clear any existing timer to prevent multiple intervals running
+      if (this.interval) {
+        clearInterval(this.interval);
+      }
+
       const startTime = Date.now();
       const duration = 10000; // 10 seconds
+      this.progressBarWidth = 100; // Reset progress bar width to 100%
 
       this.interval = setInterval(() => {
         const elapsedTime = Date.now() - startTime;
         this.progressBarWidth = 100 - (elapsedTime / duration) * 100;
 
         if (elapsedTime >= duration) {
-          clearInterval(this.interval);
-          this.progressBarWidth = 0;
-          // show alert box
+          this.handleTimeUp();
           if (this.totalFingerCount !== parseInt(this.correctOption[this.currentQuestionIndex])) {
             alert("Wrong! Your answer is " + this.totalFingerCount);
             this.is_correct = false;
@@ -191,6 +196,15 @@ export default {
           }
         }
       }, 1); // Update every 100ms for a smoother animation
+    },
+    handleTimeUp() {
+      clearInterval(this.interval);
+      this.progressBarWidth = 0;
+      // ... your alert and update logic ...
+    },
+    restartCountdown() {
+      this.handleTimeUp(); // Cleanup before restarting
+      this.startCountdown(); // Start the countdown again
     },
     initializeMediaPipe() {
       const videoElement = this.$refs.videoElement;
@@ -378,6 +392,12 @@ export default {
 
         // Reset the video element's source object
         this.$refs.videoElement.srcObject = null;
+      }
+
+      // Clear the countdown timer interval if it's running
+      if (this.interval) {
+        clearInterval(this.interval);
+        this.interval = null; // Reset the interval to ensure it's marked as cleared
       }
 
       // Navigate to the previous page
@@ -590,6 +610,12 @@ export default {
     },
     totalFingerCount() {
       this.autoSelectAnswer();
+    },
+    currentQuestionIndex(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        // If the index has changed, restart the countdown
+        this.restartCountdown();
+      }
     },
   },
 };
