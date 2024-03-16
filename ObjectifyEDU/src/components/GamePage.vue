@@ -482,18 +482,22 @@ export default {
           console.log(questionObj);
 
           if (questionObj) {
-            const iconElement = document.getElementsByClassName("question-item")[i].getElementsByTagName('i')[0];
-            if (questionObj.is_correct) {
-              iconElement.innerHTML = "<i class='bx bxs-check-circle'></i>";
-              iconElement.style.color = "#47d764";
-              iconElement.style.marginLeft = "auto";
-              iconElement.style.zIndex = 1;
-            } else {
-              iconElement.innerHTML = "<i class='bx bxs-x-circle'></i>";
-              iconElement.style.color = "#ff355b";
-              iconElement.style.marginLeft = "auto";
-              iconElement.style.zIndex = 1;
+            const iconClass = questionObj.is_correct ? 'bx bxs-check-circle' : 'bx bxs-x-circle';
+            const iconColor = questionObj.is_correct ? '#47d764' : '#ff355b';
+
+            const iconElement = document.createElement('i');
+            iconElement.className = iconClass;
+            iconElement.style.color = iconColor;
+            iconElement.style.marginLeft = "auto";
+            iconElement.style.zIndex = "1";
+
+            // Clear any existing icons to avoid duplicates
+            const questionItem = document.getElementsByClassName("question-item")[i];
+            const existingIcon = questionItem.getElementsByTagName('i')[0];
+            if (existingIcon) {
+              existingIcon.parentNode.removeChild(existingIcon);
             }
+            questionItem.appendChild(iconElement);
           }
         }
 
