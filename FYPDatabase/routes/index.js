@@ -243,24 +243,4 @@ router.post("/api/insertQuestion", async (req, res) => {
   }
 });
 
-// //post health data: Add health data
-// router.post('/addHealthDataRecord', verifyToken, async function (req, res) {
-//   const database = client.db('FYP_medApp');
-
-//   console.log(req.body);
-
-//   let addhealthDataRecordResult = await database.collection('medApp_healthDataRecord').insertOne(req.body);
-
-//   console.log("addhealthDataRecordResult");
-//   console.log(addhealthDataRecordResult); //medicalRecord, object
-
-//   if (addhealthDataRecordResult == null) {
-//     let addhealthDataRecordResult = {};
-//     addhealthDataRecordResult.resultCode = 404; //not found
-//   }
-
-//   return res.json(addhealthDataRecordResult); //return the inserted data?
-
-// });
-
 module.exports = router;

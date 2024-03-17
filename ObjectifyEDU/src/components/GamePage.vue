@@ -192,7 +192,7 @@ export default {
             ? this.updateQuestion(this.is_correct)
             : this.insertQuestion(this.is_correct);
 
-          
+
           action.then(() => {
             const nextQuestionIndex = this.currentQuestionIndex + 1;
             localStorage.setItem('currentQuestionIndex', nextQuestionIndex.toString());
