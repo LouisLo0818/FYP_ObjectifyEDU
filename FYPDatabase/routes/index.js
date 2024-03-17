@@ -160,26 +160,26 @@ router.get("/api/Courses", async function (req, res) {
 router.put("/api/updateQuestion", async function (req, res) {
   const database = client.db("eLearning");
 
+  // Directly use the simplified request body structure
+  const { student_id, question_id, is_correct } = req.body;
+
+  // Adjust the query to match the simplified structure
   const query = {
-    student_id: req.body.student_id,
-    "courses.games.questions.question_id":
-      req.body.courses[0].games[0].questions[0].question_id,
+    student_id: student_id,
+    "courses.games.questions.question_id": question_id,
   };
 
   const update = {
     $set: {
-      "courses.$[].games.$[].questions.$[question].is_correct":
-        req.body.courses[0].games[0].questions[0].is_correct,
+      // Adjust your update logic here. Note: This specific update logic might need to be revised
+      // because it directly relies on the nested structure which might not directly work with the
+      // simplified request structure.
+      "courses.$[].games.$[].questions.$[question].is_correct": is_correct,
     },
   };
 
   const options = {
-    arrayFilters: [
-      {
-        "question.question_id":
-          req.body.courses[0].games[0].questions[0].question_id,
-      },
-    ],
+    arrayFilters: [{ "question.question_id": question_id }],
   };
 
   try {
@@ -197,5 +197,70 @@ router.put("/api/updateQuestion", async function (req, res) {
     return res.status(500).send({ message: "Internal server error" });
   }
 });
+
+router.post("/api/insertQuestion", async (req, res) => {
+  const { student_id, course_id, game_id, question_id, is_correct } = req.body;
+
+  const database = client.db("eLearning");
+  const collection = database.collection("Student");
+
+  console.log("Enter insertQuestion");
+  console.log(req.body);
+
+  try {
+    const result = await collection.updateOne(
+      {
+        student_id: student_id,
+        "courses.course_id": course_id,
+        "courses.games.game_id": game_id,
+      },
+      {
+        $push: {
+          "courses.$[course].games.$[game].questions": {
+            question_id: question_id,
+            is_correct: is_correct,
+          },
+        },
+      },
+      {
+        arrayFilters: [
+          { "course.course_id": course_id },
+          { "game.game_id": game_id },
+        ],
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Question added successfully", result: result });
+  } catch (error) {
+    console.error("Error updating game questions:", error);
+    res.status(500).json({ message: "Internal server error", error: error });
+  }
+});
+
+// //post health data: Add health data
+// router.post('/addHealthDataRecord', verifyToken, async function (req, res) {
+//   const database = client.db('FYP_medApp');
+
+//   console.log(req.body);
+
+//   let addhealthDataRecordResult = await database.collection('medApp_healthDataRecord').insertOne(req.body);
+
+//   console.log("addhealthDataRecordResult");
+//   console.log(addhealthDataRecordResult); //medicalRecord, object
+
+//   if (addhealthDataRecordResult == null) {
+//     let addhealthDataRecordResult = {};
+//     addhealthDataRecordResult.resultCode = 404; //not found
+//   }
+
+//   return res.json(addhealthDataRecordResult); //return the inserted data?
+
+// });
 
 module.exports = router;

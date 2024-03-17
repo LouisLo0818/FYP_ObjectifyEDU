@@ -127,25 +127,20 @@ export default {
                 const courseInfo = jsonData2.map((item) => item.courses.filter((course) => course.course_id === this.$route.params.id));
                 const gameInfo = courseInfo[0].map((item) => item.games);
                 const game_id = gameInfo.map((item) => item.map((game) => game.game_id));
-                const game_progress = gameInfo.map((item) => item.map((item) => item.questions.map((item) => item.is_correct).length));
+
+                // Modified calculation of game_progress
+                const game_progress = gameInfo.map((item) => item.map((game) => {
+                    if (game.questions.length > 0) {
+                        return game.questions.length;
+                    } else {
+                        return 0; // Set to 0 if questions array is empty
+                    }
+                }));
+
                 console.log(game_id);
                 console.log(game_progress);
 
-                if (game_id.length === 0) {
-                    this.SEDbar = Array(this.game_id.length).fill(0);
-                    return;
-                } else {
-                    for (let i = 0; i < this.game_id.length; i++) {
-                        if (game_id[0].includes(this.game_id[i])) {
-                            this.SEDbar[i] = game_progress[0][0];
-                            game_progress.shift();
-                        } else {
-                            this.SEDbar[i] = 0;
-                        }
-                    }
-                }
-
-                console.log(this.SEDbar);
+                this.SEDbar = game_progress[0].map((progress) => progress || 0);
 
             } catch (error) {
                 console.error("Error fetching data:", error);

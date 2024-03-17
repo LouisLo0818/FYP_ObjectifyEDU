@@ -141,6 +141,7 @@ export default {
       videoHeight: 0,
       isRadioButtonChecked: false,
       is_correct: false,
+      foundQuestionId: []
     };
   },
   computed: {
@@ -157,6 +158,8 @@ export default {
     this.startCountdown();
     // Add event listener to call setCanvasSize on window resize
     window.addEventListener('resize', this.setCanvasSize);
+
+    this.currentQuestionIndex = parseInt(localStorage.getItem('currentQuestionIndex'), 10) || 0;
   },
   beforeDestroy() {
     // Clear the interval when the component is destroyed
@@ -168,34 +171,39 @@ export default {
   },
   methods: {
     startCountdown() {
-      // Clear any existing timer to prevent multiple intervals running
-      if (this.interval) {
-        clearInterval(this.interval);
-      }
-
       const startTime = Date.now();
       const duration = 10000; // 10 seconds
-      this.progressBarWidth = 100; // Reset progress bar width to 100%
 
       this.interval = setInterval(() => {
         const elapsedTime = Date.now() - startTime;
         this.progressBarWidth = 100 - (elapsedTime / duration) * 100;
 
         if (elapsedTime >= duration) {
+          clearInterval(this.interval); // Clear the interval to stop the countdown
           this.handleTimeUp();
-          if (this.totalFingerCount !== parseInt(this.correctOption[this.currentQuestionIndex])) {
-            alert("Wrong! Your answer is " + this.totalFingerCount);
-            this.is_correct = false;
-            this.updateQuestion(this.is_correct);
+          const resultMessage = this.totalFingerCount !== parseInt(this.correctOption[this.currentQuestionIndex], 10)
+            ? "Wrong! Your answer is " + this.totalFingerCount
+            : "Correct! Your answer is " + this.totalFingerCount;
+
+          alert(resultMessage);
+          this.is_correct = this.totalFingerCount === parseInt(this.correctOption[this.currentQuestionIndex], 10);
+
+          const action = this.foundQuestionId.includes(this.question_id[this.currentQuestionIndex])
+            ? this.updateQuestion(this.is_correct)
+            : this.insertQuestion(this.is_correct);
+
+          
+          action.then(() => {
+            const nextQuestionIndex = this.currentQuestionIndex + 1;
+            localStorage.setItem('currentQuestionIndex', nextQuestionIndex.toString());
             window.location.reload();
-          } else {
-            alert("Correct! Your answer is " + this.totalFingerCount);
-            this.is_correct = true;
-            this.updateQuestion(this.is_correct);
-            window.location.reload();
-          }
+          });
         }
       }, 1); // Update every 100ms for a smoother animation
+    },
+    resetGame() {
+      localStorage.removeItem('currentQuestionIndex');
+      // ... reset game to the first question and other necessary reset operations
     },
     handleTimeUp() {
       clearInterval(this.interval);
@@ -401,7 +409,8 @@ export default {
       }
 
       // Navigate to the previous page
-      this.$router.go(-1);
+      this.$router.push('/Courses/Games/' + this.$route.params.id);
+      this.resetGame()
     },
     async fetchGameInfo() {
       try {
@@ -472,10 +481,20 @@ export default {
           }
         })));
 
-        this.tmp = questions[0][0];
+        console.log(game_id);
+        console.log(courseInfo2);
+        this.foundQuestionId = questions[0][0].map((item) => item.question_id);
+        console.log(this.foundQuestionId);
 
-        console.log(questions);
+        const doesQuestionExist = questions.some(course =>
+          course.some(game =>
+            game.some(question => question.question_id === "Math001_G1Q3")
+          )
+        );
 
+        console.log(doesQuestionExist); // This will log 'true' if the question_id exists, 'false' otherwise.
+
+        // check "Math001_G1G3" is exits in questions
         for (let i = 0; i < question_id.length; i++) {
 
           const questionObj = questions[0][0].find(q => q.question_id === question_id[i]);
@@ -510,21 +529,9 @@ export default {
         const token = localStorage.getItem("user");
 
         const updateQuestion = {
-          "student_id": localStorage.getItem("student_id"),
-          "courses": [
-            {
-              "games": [
-                {
-                  "questions": [
-                    {
-                      "question_id": this.question_id[this.currentQuestionIndex],
-                      "is_correct": is_correct // Assuming 'is_correct' is a boolean you have defined elsewhere
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          student_id: localStorage.getItem("student_id"),
+          question_id: this.question_id[this.currentQuestionIndex],
+          is_correct: is_correct
         };
 
         const response = await fetch("/api/updateQuestion", {
@@ -535,6 +542,37 @@ export default {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(updateQuestion),
+        });
+        console.log(response);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
+    async insertQuestion(is_correct) {
+      console.log("enter api");
+      try {
+        const token = localStorage.getItem("user");
+
+        const insertQuestion = {
+          course_id: this.$route.params.id,
+          game_id: this.$route.params.gameId,
+          student_id: localStorage.getItem("student_id"),
+          question_id: this.question_id[this.currentQuestionIndex],
+          is_correct: is_correct
+        };
+
+        const response = await fetch("/api/insertQuestion", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(insertQuestion),
         });
         console.log(response);
 
