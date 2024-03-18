@@ -7,7 +7,7 @@
             <div class="question-content d-flex align-items-center justify-content-between">
               <!-- Question Text -->
               <div class="nav-title flex-grow-1 mx-3" style="color: #6c757d;">
-                {{ questionText }}
+                {{ questions[currentQuestionIndex] ? questions[currentQuestionIndex].questionText : 'Loading question...' }}
               </div>
               <!-- Action Button -->
               <div class="nav-action">
@@ -179,27 +179,34 @@ export default {
         this.progressBarWidth = 100 - (elapsedTime / duration) * 100;
 
         if (elapsedTime >= duration) {
-          clearInterval(this.interval); // Clear the interval to stop the countdown
-          this.handleTimeUp();
-          const resultMessage = this.totalFingerCount !== parseInt(this.correctOption[this.currentQuestionIndex], 10)
-            ? "Wrong! Your answer is " + this.totalFingerCount
-            : "Correct! Your answer is " + this.totalFingerCount;
+          clearInterval(this.interval); // Stop the countdown
+          this.handleTimeUp(); // Perform any required actions when time is up
+
+          // Determine if the answer is correct
+          const isAnswerCorrect = this.totalFingerCount === parseInt(this.correctOption[this.currentQuestionIndex], 10);
+          const resultMessage = isAnswerCorrect
+            ? "Correct! Your answer is " + this.totalFingerCount
+            : "Wrong! Your answer is " + this.totalFingerCount;
 
           alert(resultMessage);
-          this.is_correct = this.totalFingerCount === parseInt(this.correctOption[this.currentQuestionIndex], 10);
+          this.is_correct = isAnswerCorrect;
 
+          // Determine the action based on whether the question ID is found
           const action = this.foundQuestionId.includes(this.question_id[this.currentQuestionIndex])
             ? this.updateQuestion(this.is_correct)
             : this.insertQuestion(this.is_correct);
 
-
           action.then(() => {
-            const nextQuestionIndex = this.currentQuestionIndex + 1;
-            localStorage.setItem('currentQuestionIndex', nextQuestionIndex.toString());
+            if (isAnswerCorrect) {
+              // Move to the next question only if the answer is correct
+              const nextQuestionIndex = this.currentQuestionIndex + 1;
+              localStorage.setItem('currentQuestionIndex', nextQuestionIndex.toString());
+            }
+            // Reload the page to reflect changes or navigate accordingly
             window.location.reload();
           });
         }
-      }, 1); // Update every 100ms for a smoother animation
+      }, 1); // Update interval for smoother animation
     },
     resetGame() {
       localStorage.removeItem('currentQuestionIndex');
