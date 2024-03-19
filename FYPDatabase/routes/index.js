@@ -9,7 +9,6 @@ const uri = "mongodb+srv://louis:Hellomashi1!@cluster0.rpobuov.mongodb.net/";
 const client = new MongoClient(uri);
 
 //setting up the api
-
 router.get("/", function (req, res, next) {
   res.render("index", { title: "Express" });
 });

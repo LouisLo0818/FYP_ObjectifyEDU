@@ -1,74 +1,92 @@
 <template>
-    <div id="app">
-        <video id="myVideo" ref="video" width="720" height="560" autoplay muted></video>
-        <canvas id="myCanvas" ref="canvas" width="720" height="560"></canvas>
+    <div class="video-container">
+      <!-- Hide the video element but keep it in the DOM for capturing video stream -->
+      <video ref="videoElement" autoplay muted style="display: none;"></video>
+      <canvas ref="canvasElement"></canvas>
     </div>
-</template>
-
-<script>
-import * as faceapi from "face-api.js";
-import * as canvas from 'canvas';
-
-export default {
-    name: 'FaceRecognition',
-    async mounted() {
-        await this.loadModels();
-        this.startVideo();
-    },
-    methods: {
-        async loadModels() {
-            // Adjust the paths based on where you've stored the models
-            const MODEL_URL = 'src\models';
-            // const input = document.getElementById('myImg')
-            await Promise.all([
-                faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
-                faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-                faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-                faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL),
-            ])
-        },
-        async startVideo() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-                this.$refs.video.srcObject = stream;
-                this.$refs.video.onloadedmetadata = () => {
-                    this.detectEmotions();
-                };
-            } catch (error) {
-                console.error('Error starting video stream:', error);
-            }
-        },
-        async detectEmotions() {
-            const videoEl = this.$refs.video;
-            const canvas = this.$refs.canvas;
-            const displaySize = { width: videoEl.width, height: videoEl.height };
-            faceapi.matchDimensions(canvas, displaySize);
-
-            setInterval(async () => {
-                const detections = await faceapi.detectAllFaces(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
-                const resizedDetections = faceapi.resizeResults(detections, displaySize);
-                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-                faceapi.draw.drawDetections(canvas, resizedDetections);
-                faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-                faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
-            }, 100);
-        },
-    },
-};
-</script>
-
-<style scoped>
-body {
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-canvas {
+  </template>
+  
+  <script>
+  import { ref, onMounted } from 'vue';
+  import * as faceapi from 'face-api.js';
+  
+  export default {
+    setup() {
+      const videoElement = ref(null);
+      const canvasElement = ref(null);
+  
+      async function loadModels() {
+        const MODEL_URL = '/models';
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+      }
+  
+      async function startVideo() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+          videoElement.value.srcObject = stream;
+          videoElement.value.onloadedmetadata = () => {
+            videoElement.value.play();
+            detectEmotions();
+          };
+        } catch (error) {
+          console.error('Error starting video stream:', error);
+        }
+      }
+  
+      async function detectEmotions() {
+        // Wait until the video element has dimensions
+        await new Promise(resolve => {
+          if (videoElement.value.videoWidth > 0) {
+            resolve();
+          } else {
+            videoElement.value.onloadedmetadata = () => resolve();
+          }
+        });
+  
+        const displaySize = { width: videoElement.value.videoWidth, height: videoElement.value.videoHeight };
+        faceapi.matchDimensions(canvasElement.value, displaySize);
+  
+        setInterval(async () => {
+          const detections = await faceapi.detectAllFaces(videoElement.value, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceExpressions();
+          const resizedDetections = faceapi.resizeResults(detections, displaySize);
+          canvasElement.value.getContext('2d').clearRect(0, 0, canvasElement.value.width, canvasElement.value.height);
+          // Optionally, draw the video frame to the canvas
+          canvasElement.value.getContext('2d').drawImage(videoElement.value, 0, 0, displaySize.width, displaySize.height);
+          faceapi.draw.drawDetections(canvasElement.value, resizedDetections);
+          faceapi.draw.drawFaceLandmarks(canvasElement.value, resizedDetections);
+          faceapi.draw.drawFaceExpressions(canvasElement.value, resizedDetections);
+        }, 100);
+      }
+  
+      onMounted(async () => {
+        await loadModels();
+        startVideo();
+      });
+  
+      return {
+        videoElement,
+        canvasElement
+      };
+    }
+  };
+  </script>
+  
+  <style scoped>
+  .video-container {
+    position: relative;
+    width: 720px;
+    height: 560px;
+  }
+  
+  video, canvas {
     position: absolute;
-}
-</style>
+    width: 100%;
+    height: 100%;
+  }
+  </style>
+  

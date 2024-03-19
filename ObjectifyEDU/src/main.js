@@ -8,14 +8,12 @@ import 'bootstrap-icons/font/bootstrap-icons.css' // Bootstrap Icons
 import "font-awesome/css/font-awesome.min.css"; // Font Awesome
 import 'boxicons/css/boxicons.min.css' // Box Icons
 
-import sidebar from '@/examples/Sidebar.vue';
 import navbar from '@/examples/Navbar.vue';
 import side from '@/examples/side.vue';
 
 const app = createApp(App)
 
 app.use(router)
-app.component('sidebar', sidebar)
 app.component('navbar', navbar)
 app.component('side', side)
 app.mount('#app')

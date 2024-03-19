@@ -1,3 +1,7 @@
+<script setup>
+import rating from "@/examples/Rating.vue";
+</script>
+
 <template>
   <div class="gamePageContainer">
     <div class="container" style="height: 100%;">
@@ -7,7 +11,7 @@
             <div class="question-content d-flex align-items-center justify-content-between">
               <!-- Question Text -->
               <div class="nav-title flex-grow-1 mx-3" style="color: #6c757d;">
-                {{ questions[currentQuestionIndex] ? questions[currentQuestionIndex].questionText : 'Loading question...' }}
+                {{ questions[currentQuestionIndex] ? questions[currentQuestionIndex].questionText : '' }}
               </div>
               <!-- Action Button -->
               <div class="nav-action">
@@ -112,6 +116,7 @@
             </div>
           </div>
         </div>
+        <rating />
       </div>
     </div>
   </div>
@@ -121,6 +126,8 @@
 import { Hands, HAND_CONNECTIONS } from "@mediapipe/hands";
 import { Camera } from "@mediapipe/camera_utils";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
+import { ref, onMounted } from 'vue';
+import * as faceapi from 'face-api.js';
 
 export default {
   data() {
@@ -150,12 +157,13 @@ export default {
     }
   },
   mounted() {
-    this.initializeMediaPipe();
+    this.initializeFaceAPI();
+    // this.initializeMediaPipe();
     this.fetchGameInfo();
     this.autoSelectAnswer();
     // Call the method to set the initial size based on the current container width
     this.setCanvasSize();
-    this.startCountdown();
+    // this.startCountdown();
     // Add event listener to call setCanvasSize on window resize
     window.addEventListener('resize', this.setCanvasSize);
 
@@ -221,6 +229,50 @@ export default {
       this.handleTimeUp(); // Cleanup before restarting
       this.startCountdown(); // Start the countdown again
     },
+
+    async loadModels() {
+      const MODEL_URL = 'public/models';
+      await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+      await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+      await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+      await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+    },
+    async startVideo() {
+      const videoElement = this.$refs.videoElement;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+        videoElement.srcObject = stream;
+        videoElement.onloadedmetadata = () => {
+          videoElement.play();
+          this.detectEmotions();
+        };
+      } catch (error) {
+        console.error('Error starting video stream:', error);
+      }
+    },
+    async detectEmotions() {
+      const videoElement = this.$refs.videoElement;
+      const canvasElement = this.$refs.canvasElement;
+      const displaySize = { width: videoElement.offsetWidth, height: videoElement.offsetHeight };
+      faceapi.matchDimensions(canvasElement, displaySize);
+
+      setInterval(async () => {
+        const detections = await faceapi.detectAllFaces(videoElement, new faceapi.TinyFaceDetectorOptions())
+          .withFaceLandmarks()
+          .withFaceExpressions();
+        const resizedDetections = faceapi.resizeResults(detections, displaySize);
+        canvasElement.getContext('2d').clearRect(0, 0, canvasElement.width, canvasElement.height);
+        faceapi.draw.drawDetections(canvasElement, resizedDetections);
+        faceapi.draw.drawFaceLandmarks(canvasElement, resizedDetections);
+        faceapi.draw.drawFaceExpressions(canvasElement, resizedDetections);
+      }, 1);
+    },
+    async initializeFaceAPI() {
+      await this.loadModels();
+      this.startVideo();
+    },
+    //----------------------------------------- MediaPipe Methods -----------------------------------------//
+
     initializeMediaPipe() {
       const videoElement = this.$refs.videoElement;
       const canvasElement = this.$refs.canvasElement;
