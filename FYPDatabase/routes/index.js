@@ -242,4 +242,46 @@ router.post("/api/insertQuestion", async (req, res) => {
   }
 });
 
+router.put("/api/feedback", async (req, res) => {
+  const { student_id, feedback, course_id, game_id } = req.body;
+
+  const database = client.db("eLearning");
+  const collection = database.collection("Student");
+
+  console.log("Enter feedback");
+  console.log(req.body);
+
+  try {
+    const result = await collection.updateOne(
+      {
+        student_id: student_id,
+        "courses.course_id": course_id,
+        "courses.games.game_id": game_id,
+      },
+      {
+        $set: {
+          "courses.$[course].games.$[game].feedback": feedback,
+        },
+      },
+      {
+        arrayFilters: [
+          { "course.course_id": course_id },
+          { "game.game_id": game_id },
+        ],
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Feedback added successfully", result: result });
+  } catch (error) {
+    console.error("Error updating feedback:", error);
+    res.status(500).json({ message: "Internal server error", error: error });
+  }
+});
+
 module.exports = router;

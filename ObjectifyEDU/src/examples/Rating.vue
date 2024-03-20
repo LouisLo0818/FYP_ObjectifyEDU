@@ -1,5 +1,4 @@
 <template>
-
     <div class="rating-container">
         <div class="rating-box">
             <header>How was your experience?</header>
@@ -21,20 +20,102 @@ export default {
             rating: 0, // Initial rating value
         };
     },
+    mounted() {
+        this.feedbackInterface();
+    },
     methods: {
         setRating(index) {
             this.rating = index;
         },
         // if click submit button then rating-box display none
-        submitRating() {
+        async submitRating() {
             // Process the rating here before hiding the rating box
             const rating = document.querySelector(".rating-container");
             rating.style.display = "none";
+
+            const stuid = localStorage.getItem("student_id");
+
+            const stuidInput = {
+                course_id: this.$route.params.id,
+                game_id: this.$route.params.gameId,
+                student_id: stuid,
+                feedback: this.rating
+            };
+
+            console.log(stuidInput);
+
+            try {
+                const token = localStorage.getItem("user");
+
+                const response = await fetch("/api/feedback", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        // Include the token in the Authorization header
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(stuidInput),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch the student data");
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        },
+        async feedbackInterface() {
+            console.log("feedbackInterface");
+            const stuid = localStorage.getItem("student_id");
+
+            const stuidInput = {
+                student_id: stuid,
+            };
+
+            try {
+                const token = localStorage.getItem("user");
+
+                const response = await fetch("/api/Student", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        // Include the token in the Authorization header
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(stuidInput),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch the student data");
+                }
+
+                const jsonData = await response.json();
+                const course = jsonData[0].courses.find(course => course.course_id === this.$route.params.id);
+                const game = course.games.find(game => game.game_id === this.$route.params.gameId);
+
+                // check the student finished the game or not
+                const finished = game.questions.length
+                console.log(finished);
+                // if student have no give feedback will hide the rating box
+                const feedback = game.feedback;
+                console.log(feedback);
+
+                if (finished >= 10 && feedback === -1) {
+                    const rating = document.querySelector(".rating-container");
+                    rating.style.display = "block";
+                } else {
+                    const rating = document.querySelector(".rating-container");
+                    rating.style.display = "none";
+                }
+
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
         },
     },
 };
 </script>
-
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
 
@@ -66,6 +147,7 @@ export default {
     /* Fallback color */
     background-color: rgba(0, 0, 0, 0.4);
     /* Black w/ opacity */
+    display: none;
 }
 
 .rating-box {

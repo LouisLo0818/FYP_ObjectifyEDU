@@ -1,6 +1,7 @@
 <script setup>
 import GamePage from "../components/GamePage.vue";
 import rating from "@/examples/Rating.vue";
+import Celebrating from "@/examples/Celebrating.vue";
 </script>
 
 <template>
@@ -125,6 +126,9 @@ import rating from "@/examples/Rating.vue";
                     </div>
                 </div>
                 <rating />
+                <div>
+                    <span id="reward-container"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -156,7 +160,7 @@ export default {
             videoHeight: 0,
             isRadioButtonChecked: false,
             is_correct: false,
-            foundQuestionId: []
+            foundQuestionId: [],
         };
     },
     computed: {
@@ -172,12 +176,12 @@ export default {
         } else if (["Math001", "Math002"].includes(this.$route.params.id)) {
             this.initializeMediaPipe();
         }
-
         this.fetchGameInfo();
         this.autoSelectAnswer();
         // Call the method to set the initial size based on the current container width
+        this.startCountdown();
         this.setCanvasSize();
-        // this.startCountdown();
+        this.showRewards();
         // Add event listener to call setCanvasSize on window resize
         window.addEventListener('resize', this.setCanvasSize);
 
@@ -206,9 +210,16 @@ export default {
 
                     // Determine if the answer is correct
                     const isAnswerCorrect = this.totalFingerCount === parseInt(this.correctOption[this.currentQuestionIndex], 10);
+
                     const resultMessage = isAnswerCorrect
                         ? "Correct! Your answer is " + this.totalFingerCount
                         : "Wrong! Your answer is " + this.totalFingerCount;
+
+                    if (isAnswerCorrect) {
+                        localStorage.setItem('showEffect', true);
+                    } else {
+                        localStorage.setItem('showEffect', false);
+                    }
 
                     alert(resultMessage);
                     this.is_correct = isAnswerCorrect;
@@ -566,6 +577,7 @@ export default {
                 const jsonData2 = await studentResponse.json();
                 const courseInfo2 = jsonData2.map((item) => item.courses.filter((course) => course.course_id === courseId));
                 const gameInfo2 = courseInfo2[0].map((item) => item.games.filter((game) => game.game_id === this.$route.params.gameId));
+
                 const game_id = gameInfo2.map((item) => item.map((game) => game.game_id));
                 const questions = gameInfo2.map((item) => item.map((item) => item.questions.map((item) => {
                     return {
@@ -730,6 +742,31 @@ export default {
                     radio.checked = radio.value == this.totalFingerCount;
                 });
             }
+        },
+        showRewards() {
+            const confettiConfig = {
+                startVelocity: 30,
+                elementCount: 100,
+                spread: 360,
+            };
+            const emojiConfig = {
+                elementCount: 35,
+                spread: 180,
+                emojis: ['🎉', '😄', '🥳'],
+            };
+
+            // Assuming `$reward` returns a function that, when called, activates the reward animation
+            const { reward: confettiReward } = this.$reward('reward-container', 'confetti', confettiConfig);
+            const { reward: emojiReward } = this.$reward('reward-container', 'emoji', emojiConfig);
+
+            if (localStorage.getItem('showEffect') === 'true') {
+                // Trigger both rewards
+                confettiReward();
+                emojiReward();
+            }
+            // Trigger both rewards
+            // confettiReward();
+            // emojiReward();
         },
     },
 
@@ -1081,5 +1118,15 @@ export default {
     color: #47d764;
     margin-left: auto;
     z-index: 1;
+}
+
+#reward-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 </style>

@@ -157,6 +157,7 @@ export default {
     }
   },
   mounted() {
+    console.log($gobal.state.isRatingBoxShow);
     this.initializeFaceAPI();
     // this.initializeMediaPipe();
     this.fetchGameInfo();
