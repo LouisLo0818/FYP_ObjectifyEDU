@@ -276,22 +276,33 @@ export default {
             const onFrame = async () => {
                 if (videoEl.paused || videoEl.ended) return;
 
+                // Flip the canvas to achieve a "selfie mode" mirror effect
+                canvasEl.getContext('2d').save();
+                canvasEl.getContext('2d').scale(-1, 1); // Flip horizontally
+                canvasEl.getContext('2d').translate(-canvasEl.width, 0);
+
                 const detections = await faceapi.detectAllFaces(videoEl, new faceapi.TinyFaceDetectorOptions())
                     .withFaceLandmarks()
                     .withFaceExpressions();
 
                 const resizedDetections = faceapi.resizeResults(detections, displaySize);
                 canvasEl.getContext('2d').clearRect(0, 0, canvasEl.width, canvasEl.height);
+                // Adjust the position for drawing the mirrored video
                 canvasEl.getContext('2d').drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
+
+                // Since the canvas is flipped, detections need to be drawn flipped as well
                 faceapi.draw.drawDetections(canvasEl, resizedDetections);
                 faceapi.draw.drawFaceLandmarks(canvasEl, resizedDetections);
                 faceapi.draw.drawFaceExpressions(canvasEl, resizedDetections);
+
+                // Restore the canvas to its original state
+                canvasEl.getContext('2d').restore();
 
                 requestAnimationFrame(onFrame);
             };
 
             faceapi.matchDimensions(canvasEl, displaySize);
-            onFrame(); // start processing frames
+            onFrame(); // Start processing frames
         },
 
         //----------------------------------------- Face API functions -----------------------------------------//
