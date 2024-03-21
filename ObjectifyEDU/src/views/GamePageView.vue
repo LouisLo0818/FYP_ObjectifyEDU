@@ -179,7 +179,6 @@ export default {
         this.fetchGameInfo();
         this.autoSelectAnswer();
         // Call the method to set the initial size based on the current container width
-        this.startCountdown();
         this.setCanvasSize();
         this.showRewards();
         // Add event listener to call setCanvasSize on window resize
@@ -278,6 +277,7 @@ export default {
                 this.$refs.videoElement.onloadedmetadata = () => {
                     this.$refs.videoElement.play();
                     this.processVideo();
+                    this.startCountdown();
                 };
             } catch (error) {
                 console.error('Error starting video stream:', error);
@@ -344,6 +344,12 @@ export default {
             const camera = new Camera(videoElement, {
                 onFrame: async () => {
                     await hands.send({ image: videoElement });
+
+                    // Check if countdown has already been started
+                    if (!this.countdownStarted) {
+                        this.startCountdown();
+                        this.countdownStarted = true; // Prevent the countdown from starting again
+                    }
                 },
                 width: screen.width,
                 height: screen.height,
