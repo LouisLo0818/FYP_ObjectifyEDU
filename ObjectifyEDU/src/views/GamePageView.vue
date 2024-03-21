@@ -1,7 +1,6 @@
 <script setup>
 import GamePage from "../components/GamePage.vue";
 import rating from "@/examples/Rating.vue";
-import Celebrating from "@/examples/Celebrating.vue";
 </script>
 
 <template>
@@ -140,6 +139,8 @@ import { Camera } from "@mediapipe/camera_utils";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import { ref, onMounted } from 'vue';
 import * as faceapi from 'face-api.js';
+import { useSound } from '@vueuse/sound';
+import fanfareSfx from '@/assets/fanfare.mp3';
 
 export default {
     data() {
@@ -169,7 +170,6 @@ export default {
         }
     },
     async mounted() {
-
         if (["SE001", "SE002"].includes(this.$route.params.id)) {
             await this.loadModels();
             this.initializeVideoStream();
@@ -196,6 +196,10 @@ export default {
         //  # window.removeEventListener('resize', this.setCanvasContainer);
     },
     methods: {
+        playSound() {
+            const sound = new Audio(fanfareSfx); // Adjust path as necessary
+            sound.play();
+        },
         startCountdown() {
             const startTime = Date.now();
             const duration = 10000; // 10 seconds
@@ -763,6 +767,8 @@ export default {
                 // Trigger both rewards
                 confettiReward();
                 emojiReward();
+                this.playSound();
+                localStorage.removeItem('showEffect');
             }
             // Trigger both rewards
             // confettiReward();
