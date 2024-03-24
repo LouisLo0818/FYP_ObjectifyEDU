@@ -137,9 +137,7 @@ import rating from "@/examples/Rating.vue";
 import { Hands, HAND_CONNECTIONS } from "@mediapipe/hands";
 import { Camera } from "@mediapipe/camera_utils";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
-import { ref, onMounted } from 'vue';
 import * as faceapi from 'face-api.js';
-import { useSound } from '@vueuse/sound';
 import fanfareSfx from '@/assets/fanfare.mp3';
 
 export default {
@@ -341,15 +339,16 @@ export default {
 
             hands.onResults(this.onResults);
 
+            this.startCountdown();
             const camera = new Camera(videoElement, {
                 onFrame: async () => {
                     await hands.send({ image: videoElement });
 
                     // Check if countdown has already been started
-                    if (!this.countdownStarted) {
-                        this.startCountdown();
-                        this.countdownStarted = true; // Prevent the countdown from starting again
-                    }
+                    // if (!this.countdownStarted) {
+                    //     this.startCountdown();
+                    //     this.countdownStarted = true; // Prevent the countdown from starting again
+                    // }
                 },
                 width: screen.width,
                 height: screen.height,
