@@ -160,6 +160,7 @@ export default {
             isRadioButtonChecked: false,
             is_correct: false,
             foundQuestionId: [],
+            currentEmotion: '',
         };
     },
     computed: {
@@ -207,20 +208,25 @@ export default {
 
                 if (elapsedTime >= duration) {
                     clearInterval(this.interval); // Stop the countdown
-                    this.handleTimeUp(); // Perform any required actions when time is up
 
-                    // Determine if the answer is correct
-                    const isAnswerCorrect = this.totalFingerCount === parseInt(this.correctOption[this.currentQuestionIndex], 10);
+                    // Initialize isAnswerCorrect to false
+                    let isAnswerCorrect = false;
+                    let answer;
 
-                    const resultMessage = isAnswerCorrect
-                        ? "Correct! Your answer is " + this.totalFingerCount
-                        : "Wrong! Your answer is " + this.totalFingerCount;
-
-                    if (isAnswerCorrect) {
-                        localStorage.setItem('showEffect', true);
-                    } else {
-                        localStorage.setItem('showEffect', false);
+                    // Determine the game type and set isAnswerCorrect accordingly
+                    if (["Math001", "Math002"].includes(this.$route.params.id)) {
+                        answer = this.totalFingerCount;
+                        isAnswerCorrect = answer === parseInt(this.correctOption[this.currentQuestionIndex], 10);
+                    } else if (["SE001", "SE002"].includes(this.$route.params.id)) {
+                        answer = this.currentEmotion; // Assuming this is a string that matches one of the options
+                        // Make sure both strings are compared in the same case (e.g., both uppercase)
+                        isAnswerCorrect = answer.toUpperCase() === this.correctOption[this.currentQuestionIndex].toUpperCase();
                     }
+
+                    const resultMessage = isAnswerCorrect ? "Correct! Your answer is " + answer : "Wrong! Your answer is " + answer;
+
+                    // Update localStorage based on isAnswerCorrect
+                    localStorage.setItem('showEffect', isAnswerCorrect);
 
                     alert(resultMessage);
                     this.is_correct = isAnswerCorrect;
@@ -269,13 +275,13 @@ export default {
             console.log('Models loaded');
         },
         async initializeVideoStream() {
+            this.startCountdown();
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
                 this.$refs.videoElement.srcObject = stream;
                 this.$refs.videoElement.onloadedmetadata = () => {
                     this.$refs.videoElement.play();
                     this.processVideo();
-                    this.startCountdown();
                 };
             } catch (error) {
                 console.error('Error starting video stream:', error);
@@ -289,7 +295,6 @@ export default {
             const onFrame = async () => {
                 if (videoEl.paused || videoEl.ended) return;
 
-                // Flip the canvas to achieve a "selfie mode" mirror effect
                 canvasEl.getContext('2d').save();
                 canvasEl.getContext('2d').scale(-1, 1); // Flip horizontally
                 canvasEl.getContext('2d').translate(-canvasEl.width, 0);
@@ -300,16 +305,21 @@ export default {
 
                 const resizedDetections = faceapi.resizeResults(detections, displaySize);
                 canvasEl.getContext('2d').clearRect(0, 0, canvasEl.width, canvasEl.height);
-                // Adjust the position for drawing the mirrored video
                 canvasEl.getContext('2d').drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
 
-                // Since the canvas is flipped, detections need to be drawn flipped as well
                 faceapi.draw.drawDetections(canvasEl, resizedDetections);
                 faceapi.draw.drawFaceLandmarks(canvasEl, resizedDetections);
                 faceapi.draw.drawFaceExpressions(canvasEl, resizedDetections);
 
-                // Restore the canvas to its original state
                 canvasEl.getContext('2d').restore();
+
+                // Log the most prominent emotion detected for the first face (if any faces are detected)
+                if (detections && detections.length > 0) {
+                    const emotions = detections[0].expressions;
+                    const maxEmotion = Object.keys(emotions).reduce((a, b) => emotions[a] > emotions[b] ? a : b);
+                    this.currentEmotion = maxEmotion.charAt(0).toUpperCase() + maxEmotion.slice(1).toLowerCase();
+                    // console.log(`Most prominent emotion: ${this.currentEmotion} with a probability of ${emotions[maxEmotion].toFixed(2)}`);
+                }
 
                 requestAnimationFrame(onFrame);
             };
@@ -740,15 +750,22 @@ export default {
             // This function will be called whenever totalFingerCount changes
             const radioButtons = document.querySelectorAll(`input[name="btnradio"]`);
 
-            // Uncheck all if totalFingerCount is 0
-            if (this.totalFingerCount === 0) {
-                radioButtons.forEach((radio) => {
-                    radio.checked = false;
-                });
-            } else {
+            if (["Math001", "Math002"].includes(this.$route.params.id)) {
+                // Uncheck all if totalFingerCount is 0
+                if (this.totalFingerCount === 0) {
+                    radioButtons.forEach((radio) => {
+                        radio.checked = false;
+                    });
+                } else {
+                    // Check the radio button that matches totalFingerCount
+                    radioButtons.forEach((radio) => {
+                        radio.checked = radio.value == this.totalFingerCount;
+                    });
+                }
+            } else if (["SE001", "SE002"].includes(this.$route.params.id)) {
                 // Check the radio button that matches totalFingerCount
                 radioButtons.forEach((radio) => {
-                    radio.checked = radio.value == this.totalFingerCount;
+                    radio.checked = radio.value == this.currentEmotion;
                 });
             }
         },
@@ -792,6 +809,10 @@ export default {
             }
         },
         totalFingerCount() {
+            this.autoSelectAnswer();
+        },
+        currentEmotion() {
+            // Call autoSelectAnswer whenever currentEmotion changes
             this.autoSelectAnswer();
         },
         currentQuestionIndex(newVal, oldVal) {
