@@ -50,7 +50,7 @@
 export default {
   data() {
     return {
-      SEDbar: [],
+      SEDbar: [0, 0, 0, 0, 0, 0, 0, 0],
       course_id: {},
       course_name: [],
       time: [],
@@ -87,10 +87,10 @@ export default {
         this.lessons = jsonData.map(item => item.games.length);
 
         console.log(this.course_id);
-        console.log(this.course_name);
-        console.log(this.time);
-        console.log(this.course_img);
-        console.log(this.lessons);
+        // console.log(this.course_name);
+        // console.log(this.time);
+        // console.log(this.course_img);
+        // console.log(this.lessons);
 
         // --------------------------------------------- student table API --------------------------------------------- //
 
@@ -123,18 +123,23 @@ export default {
         const is_finish = gameInfo.map((item) => item.map((game) => game.questions.map((question) => question.is_correct).length));
 
         console.log(course_id);
-        console.log(gameInfo);
-        console.log(game_id);
-        console.log(is_finish);
+        // console.log(gameInfo);
+        // console.log(game_id);
+        // console.log(is_finish);
 
-        for (let i = 0; i < this.course_id.length; i++) {
-          if (course_id.includes(this.course_id[i])) {
-            this.SEDbar[i] = is_finish[0][0];
-            is_finish.shift();
-          } else {
-            this.SEDbar[i] = 0;
+        // Initialize this.SEDbar with zeros based on the length of this.course_id
+        this.SEDbar = new Array(this.course_id.length).fill(0);
+
+        // Iterate over each course_id and update this.SEDbar if a match is found in this.course_id
+        course_id.forEach((id, index) => {
+          const position = this.course_id.indexOf(id);
+          if (position !== -1) {
+            // Assign the is_finish value to the corresponding position in this.SEDbar
+            // Assuming is_finish is a nested array where the outer array index corresponds to course_id
+            // and the inner array holds the completion status for each game within that course
+            this.SEDbar[position] = is_finish[index] ? is_finish[index][0] : 0;
           }
-        }
+        });
 
         console.log(this.SEDbar);
 
