@@ -183,11 +183,12 @@ export default {
             if (this.questionType[this.currentQuestionIndex] === "math" || this.questionType[this.currentQuestionIndex] === "language") {
                 this.initializeMediaPipe();
             } else {
-                this.restartCountdown();
                 await this.loadModels();
                 this.initializeVideoStream();
             }
         }
+
+        await this.startCountdown();
 
         // Run these methods after ensuring all necessary data has been fetched and set
         this.autoSelectAnswer();
@@ -265,6 +266,9 @@ export default {
                             // Move to the next question only if the answer is correct
                             const nextQuestionIndex = this.currentQuestionIndex + 1;
                             localStorage.setItem('currentQuestionIndex', nextQuestionIndex.toString());
+                        } else {
+                            const nextQuestionIndex = this.currentQuestionIndex;
+                            localStorage.setItem('currentQuestionIndex', nextQuestionIndex.toString());
                         }
                         // Reload the page to reflect changes or navigate accordingly
                         window.location.reload();
@@ -299,7 +303,6 @@ export default {
             console.log('Models loaded');
         },
         async initializeVideoStream() {
-            this.startCountdown();
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
                 this.$refs.videoElement.srcObject = stream;
@@ -331,9 +334,9 @@ export default {
                 canvasEl.getContext('2d').clearRect(0, 0, canvasEl.width, canvasEl.height);
                 canvasEl.getContext('2d').drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
 
-                faceapi.draw.drawDetections(canvasEl, resizedDetections);
-                faceapi.draw.drawFaceLandmarks(canvasEl, resizedDetections);
-                faceapi.draw.drawFaceExpressions(canvasEl, resizedDetections);
+                // faceapi.draw.drawDetections(canvasEl, resizedDetections);
+                // faceapi.draw.drawFaceLandmarks(canvasEl, resizedDetections);
+                // faceapi.draw.drawFaceExpressions(canvasEl, resizedDetections);
 
                 canvasEl.getContext('2d').restore();
 
@@ -374,7 +377,6 @@ export default {
 
             hands.onResults(this.onResults);
 
-            this.startCountdown();
             const camera = new Camera(videoElement, {
                 onFrame: async () => {
                     await hands.send({ image: videoElement });
@@ -860,18 +862,18 @@ export default {
             // Call autoSelectAnswer whenever currentEmotion changes
             this.autoSelectAnswer();
         },
-        currentQuestionIndex(newVal, oldVal) {
+        async currentQuestionIndex(newVal, oldVal) {
             if (newVal !== oldVal) {
                 // If the index has changed, restart the countdown
                 this.restartCountdown();
-            }
-            if (this.$route.params.id === "Re001" || this.$route.params.id === "Re002") {
+                if (this.$route.params.id === "Re001" || this.$route.params.id === "Re002") {
                 if (this.questionType[newVal] === "math" || this.questionType[newVal] === "language") {
                     this.initializeMediaPipe();
                 } else {
-                    this.loadModels();
+                    await this.loadModels();
                     this.initializeVideoStream();
                 }
+            }
             }
         },
     },
