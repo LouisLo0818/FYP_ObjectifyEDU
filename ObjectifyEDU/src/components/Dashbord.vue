@@ -148,97 +148,15 @@ export default {
   data() {
     return {
       userName: [],
+      performance: [],
     };
   },
   mounted() {
-    this.fetchData();
+    // this.fetchData();
     this.fetchRanking();
+    this.CalculatePerformance();
   },
   methods: {
-    async fetchData() {
-      try {
-        const stuid = localStorage.getItem("student_id");
-        const token = localStorage.getItem("user");
-        const class_name = localStorage.getItem("class_name");
-
-        const stuidInput = {
-          stuid: stuid,
-        };
-
-        console.log(stuidInput);
-
-        const response = await fetch("/api/Process", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // Include the token in the Authorization header
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(stuidInput),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
-        const jsonData = await response.json();
-
-        var lis = [
-          jsonData.Social,
-          jsonData.Math,
-          jsonData.Language,
-          jsonData.Reaction,
-        ];
-
-        this.process = [];
-
-        for (let i = 0; i < lis.length; i++) {
-          switch (lis[i]) {
-            case 1:
-              this.process[i] = "Poor";
-              break;
-            case 2:
-              this.process[i] = "Bad";
-              break;
-            case 3:
-              this.process[i] = "Normal";
-              break;
-            case 4:
-              this.process[i] = "Good";
-              break;
-            default:
-              break;
-          }
-        }
-
-        var processList = ["process1", "process2", "process3", "process4"];
-
-        for (let i = 0; i < processList.length; i++) {
-          const process = document.getElementById(processList[i]);
-          process.innerHTML = this.process[i];
-          //if the process is good, set the color to green
-          if (this.process[i] == "Good") {
-            process.style.color = "#71dd37";
-          }
-          //if the process is normal, set the color to yellow
-          else if (this.process[i] == "Normal") {
-            process.style.color = "#ffab00";
-          }
-          //if the process is bad, set the color to red
-          else if (this.process[i] == "Bad") {
-            process.style.color = "#ff0000";
-          }
-          //if the process is poor, set the color to red
-          else if (this.process[i] == "Poor") {
-            process.style.color = "#ff0000";
-          }
-        }
-
-        console.log(this.process);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    },
     async fetchRanking() {
       try {
         const token = localStorage.getItem("user");
@@ -272,7 +190,180 @@ export default {
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    }
+    },
+    async CalculatePerformance() {
+      const stuid = localStorage.getItem("student_id");
+      const token = localStorage.getItem("user");
+
+      const stuidInput = {
+        student_id: stuid,
+      };
+
+      try {
+        const studentResponse = await fetch("/api/Student", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(stuidInput),
+        });
+
+        if (!studentResponse.ok) {
+          throw new Error("Failed to fetch the student data");
+        }
+
+        const studentData = await studentResponse.json();
+        const courses = studentData[0].courses;
+
+        // Function to calculate performance metrics
+        const calculateMetrics = (courseList) => {
+          let totalQuestions = 0;
+          let totalCorrect = 0;
+
+          courseList.forEach(course => {
+            course.games.forEach(game => {
+              game.questions.forEach(question => {
+                totalQuestions += 1;
+                if (question.is_correct) {
+                  totalCorrect += 1;
+                }
+              });
+            });
+          });
+
+          const winRate = totalQuestions > 0 ? ((totalCorrect / totalQuestions) * 100).toFixed(2) : 'N/A';
+
+          return {
+            totalQuestions,
+            totalCorrect,
+            winRate
+          };
+        };
+
+        // Calculate performance metrics for each category
+        const socialMetrics = calculateMetrics(courses.filter(course => ["SE001", "SE002"].includes(course.course_id)));
+        const mathMetrics = calculateMetrics(courses.filter(course => ["Math001", "Math002"].includes(course.course_id)));
+        const languageMetrics = calculateMetrics(courses.filter(course => ["Lan001", "Lan002"].includes(course.course_id)));
+        const reactionMetrics = calculateMetrics(courses.filter(course => ["Re001", "Re002"].includes(course.course_id)));
+
+        this.performance = [socialMetrics.winRate, mathMetrics.winRate, languageMetrics.winRate, reactionMetrics.winRate];
+
+        for (let i = 0; i < this.performance.length; i++) {
+          const process = document.getElementById(`process${i + 1}`);
+          //if the process is good, set the color to green
+          if (this.performance[i] >= 70) {
+            process.innerHTML = "Good";
+            process.style.color = "#71dd37";
+          }
+          //if the process is normal, set the color to yellow
+          else if (this.performance[i] >= 50) {
+            process.innerHTML = "Normal";
+            process.style.color = "#ffab00";
+          }
+          //if the process is bad, set the color to red
+          else if (this.performance[i] >= 25) {
+            process.innerHTML = "Bad";
+            process.style.color = "#ff0000";
+          }
+          else {
+            process.innerHTML = "Poor";
+            process.style.color = "#ff0000";
+          }
+        }
+
+        console.log('Social Total Win Rate:', socialMetrics.winRate);
+        console.log('Math Total Win Rate:', mathMetrics.winRate);
+        console.log('Language Total Win Rate:', languageMetrics.winRate);
+        console.log('Reaction Total Win Rate:', reactionMetrics.winRate);
+      } catch (error) {
+        console.error("Error calculating performance:", error);
+      }
+    },
+    // async fetchData() {
+    //   try {
+    //     const stuid = localStorage.getItem("student_id");
+    //     const token = localStorage.getItem("user");
+    //     const class_name = localStorage.getItem("class_name");
+
+    //     const stuidInput = {
+    //       stuid: stuid,
+    //     };
+
+    //     console.log(stuidInput);
+
+    //     const response = await fetch("/api/Process", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         // Include the token in the Authorization header
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //       body: JSON.stringify(stuidInput),
+    //     });
+
+    //     if (!response.ok) {
+    //       throw new Error("Failed to fetch data");
+    //     }
+
+    //     const jsonData = await response.json();
+
+    //     var lis = [
+    //       jsonData.Social,
+    //       jsonData.Math,
+    //       jsonData.Language,
+    //       jsonData.Reaction,
+    //     ];
+
+    //     this.process = [];
+
+    //     for (let i = 0; i < lis.length; i++) {
+    //       switch (lis[i]) {
+    //         case 1:
+    //           this.process[i] = "Poor";
+    //           break;
+    //         case 2:
+    //           this.process[i] = "Bad";
+    //           break;
+    //         case 3:
+    //           this.process[i] = "Normal";
+    //           break;
+    //         case 4:
+    //           this.process[i] = "Good";
+    //           break;
+    //         default:
+    //           break;
+    //       }
+    //     }
+
+    //     var processList = ["process1", "process2", "process3", "process4"];
+
+    //     for (let i = 0; i < processList.length; i++) {
+    //       const process = document.getElementById(processList[i]);
+    //       process.innerHTML = this.process[i];
+    //       //if the process is good, set the color to green
+    //       if (this.process[i] == "Good") {
+    //         process.style.color = "#71dd37";
+    //       }
+    //       //if the process is normal, set the color to yellow
+    //       else if (this.process[i] == "Normal") {
+    //         process.style.color = "#ffab00";
+    //       }
+    //       //if the process is bad, set the color to red
+    //       else if (this.process[i] == "Bad") {
+    //         process.style.color = "#ff0000";
+    //       }
+    //       //if the process is poor, set the color to red
+    //       else if (this.process[i] == "Poor") {
+    //         process.style.color = "#ff0000";
+    //       }
+    //     }
+
+    //     console.log(this.process);
+    //   } catch (error) {
+    //     console.error("Error fetching data:", error);
+    //   }
+    // },
   },
 };
 </script>
