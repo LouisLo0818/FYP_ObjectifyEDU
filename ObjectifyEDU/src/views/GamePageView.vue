@@ -161,6 +161,7 @@ export default {
             is_correct: false,
             foundQuestionId: [],
             currentEmotion: '',
+            questionType: [],
         };
     },
     computed: {
@@ -169,20 +170,34 @@ export default {
         }
     },
     async mounted() {
+        // First, fetch all game information and ensure it completes
+        await this.fetchGameInfo();
+
+        // After fetching game info, check conditions and proceed accordingly
         if (["SE001", "SE002"].includes(this.$route.params.id)) {
             await this.loadModels();
             this.initializeVideoStream();
-        } else if (["Math001", "Math002"].includes(this.$route.params.id)) {
+        } else if (["Math001", "Math002", "Lan001"].includes(this.$route.params.id)) {
             this.initializeMediaPipe();
+        } else if (["Re001", "Re002"].includes(this.$route.params.id)) {
+            if (this.questionType[this.currentQuestionIndex] === "math" || this.questionType[this.currentQuestionIndex] === "language") {
+                this.initializeMediaPipe();
+            } else {
+                await this.loadModels();
+                this.initializeVideoStream();
+            }
         }
-        this.fetchGameInfo();
+
+        await this.startCountdown();
+        // Run these methods after ensuring all necessary data has been fetched and set
         this.autoSelectAnswer();
-        // Call the method to set the initial size based on the current container width
         this.setCanvasSize();
         this.showRewards();
+
         // Add event listener to call setCanvasSize on window resize
         window.addEventListener('resize', this.setCanvasSize);
 
+        // Set the current question index
         this.currentQuestionIndex = parseInt(localStorage.getItem('currentQuestionIndex'), 10) || 0;
     },
     beforeDestroy() {
@@ -212,18 +227,27 @@ export default {
                     // Initialize isAnswerCorrect to false
                     let isAnswerCorrect = false;
                     let answer;
-
+                    let resultMessage = "";
+                    const createResultMessage = (isCorrect, answer) => isCorrect ? `Correct! Your answer is ${answer}.` : `Wrong! Your answer is ${answer}.`;
                     // Determine the game type and set isAnswerCorrect accordingly
                     if (["Math001", "Math002"].includes(this.$route.params.id)) {
-                        answer = this.totalFingerCount;
+                        const answer = this.totalFingerCount;
                         isAnswerCorrect = answer === parseInt(this.correctOption[this.currentQuestionIndex], 10);
+                        resultMessage = createResultMessage(isAnswerCorrect, answer);
                     } else if (["SE001", "SE002"].includes(this.$route.params.id)) {
-                        answer = this.currentEmotion; // Assuming this is a string that matches one of the options
-                        // Make sure both strings are compared in the same case (e.g., both uppercase)
-                        isAnswerCorrect = answer.toUpperCase() === this.correctOption[this.currentQuestionIndex].toUpperCase();
+                        const answer = this.currentEmotion.toUpperCase(); // Normalize the case for comparison
+                        isAnswerCorrect = answer === this.correctOption[this.currentQuestionIndex].toUpperCase();
+                        resultMessage = createResultMessage(isAnswerCorrect, answer);
+                    } else if (["Lan001", "Lan002"].includes(this.$route.params.id)) {
+                        const answerIndex = this.totalFingerCount - 1; // Adjusted for zero-based indexing
+                        if (answerIndex >= 0 && answerIndex < this.options[this.currentQuestionIndex].length) {
+                            const answer = this.options[this.currentQuestionIndex][answerIndex];
+                            isAnswerCorrect = answer === this.correctOption[this.currentQuestionIndex];
+                            resultMessage = createResultMessage(isAnswerCorrect, answer);
+                        } else {
+                            console.warn("Invalid answer index:", answerIndex);
+                        }
                     }
-
-                    const resultMessage = isAnswerCorrect ? "Correct! Your answer is " + answer : "Wrong! Your answer is " + answer;
 
                     // Update localStorage based on isAnswerCorrect
                     localStorage.setItem('showEffect', isAnswerCorrect);
@@ -275,7 +299,6 @@ export default {
             console.log('Models loaded');
         },
         async initializeVideoStream() {
-            this.startCountdown();
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
                 this.$refs.videoElement.srcObject = stream;
@@ -349,16 +372,9 @@ export default {
 
             hands.onResults(this.onResults);
 
-            this.startCountdown();
             const camera = new Camera(videoElement, {
                 onFrame: async () => {
                     await hands.send({ image: videoElement });
-
-                    // Check if countdown has already been started
-                    // if (!this.countdownStarted) {
-                    //     this.startCountdown();
-                    //     this.countdownStarted = true; // Prevent the countdown from starting again
-                    // }
                 },
                 width: screen.width,
                 height: screen.height,
@@ -407,10 +423,13 @@ export default {
                 }
             }
 
-            // spical gesture right(8)
-            if ((!isLeftHand && landmarks[5].y < landmarks[0].y) && (!isLeftHand && landmarks[4].x < landmarks[3].x) && (!isLeftHand && landmarks[8].y < landmarks[7].y) && (!isLeftHand && landmarks[12].y < landmarks[11].y) && (!isLeftHand && landmarks[14].y < landmarks[15].y) && (!isLeftHand && landmarks[18].y < landmarks[19].y)) {
-                fingerCount += 8;
-                right_hand.right_8 = true;
+
+            if (["Math001", "Math002"].includes(this.$route.params.id) || this.questionType[this.currentQuestionIndex] === "math") {
+                // spical gesture right(8)
+                if ((!isLeftHand && landmarks[5].y < landmarks[0].y) && (!isLeftHand && landmarks[4].x < landmarks[3].x) && (!isLeftHand && landmarks[8].y < landmarks[7].y) && (!isLeftHand && landmarks[12].y < landmarks[11].y) && (!isLeftHand && landmarks[14].y < landmarks[15].y) && (!isLeftHand && landmarks[18].y < landmarks[19].y)) {
+                    fingerCount += 8;
+                    right_hand.right_8 = true;
+                }
             }
 
             // spical gesture right(9)
@@ -511,6 +530,19 @@ export default {
         determineHandType(landmarks) {
             return landmarks[0].x < landmarks[1].x ? 'Left' : 'Right';
         },
+        async Mixedplay() {
+            console.log("Mixedplay");
+            console.log("questionType array:", this.questionType);
+            console.log("Current index:", this.currentQuestionIndex);
+            console.log("Current question type:", this.questionType[this.currentQuestionIndex]);
+
+            if (this.questionType[this.currentQuestionIndex] === "math" || this.questionType[this.currentQuestionIndex] === "language") {
+                this.initializeMediaPipe();
+            } else {
+                await this.loadModels();
+                this.initializeVideoStream();
+            }
+        },
         finishLesson() {
             // Stop the camera stream
             if (this.$refs.videoElement && this.$refs.videoElement.srcObject) {
@@ -571,6 +603,11 @@ export default {
                 console.log(this.options);
                 console.log(this.correctOption);
 
+                if (this.$route.params.id === "Re001" || this.$route.params.id === "Re002") {
+                    this.questionType = this.questions.map((question) => question.questionType);
+                    console.log(this.questionType);
+                }
+
                 // --------------------------------------------- student table API --------------------------------------------- //
 
                 const stuid = localStorage.getItem("student_id");
@@ -610,13 +647,6 @@ export default {
                 this.foundQuestionId = questions[0][0].map((item) => item.question_id);
                 console.log(this.foundQuestionId);
 
-                const doesQuestionExist = questions.some(course =>
-                    course.some(game =>
-                        game.some(question => question.question_id === "Math001_G1Q3")
-                    )
-                );
-
-                console.log(doesQuestionExist); // This will log 'true' if the question_id exists, 'false' otherwise.
 
                 // check "Math001_G1G3" is exits in questions
                 for (let i = 0; i < question_id.length; i++) {
@@ -750,7 +780,7 @@ export default {
             // This function will be called whenever totalFingerCount changes
             const radioButtons = document.querySelectorAll(`input[name="btnradio"]`);
 
-            if (["Math001", "Math002"].includes(this.$route.params.id)) {
+            if (["Math001", "Math002", "Re001", "Re002"].includes(this.$route.params.id)) {
                 // Uncheck all if totalFingerCount is 0
                 if (this.totalFingerCount === 0) {
                     radioButtons.forEach((radio) => {
@@ -762,11 +792,22 @@ export default {
                         radio.checked = radio.value == this.totalFingerCount;
                     });
                 }
-            } else if (["SE001", "SE002"].includes(this.$route.params.id)) {
+            } else if (["SE001", "SE002", "Re001", "Re002"].includes(this.$route.params.id)) {
                 // Check the radio button that matches totalFingerCount
                 radioButtons.forEach((radio) => {
                     radio.checked = radio.value == this.currentEmotion;
                 });
+            } else if (["Lan001", "Lan002", "Re001", "Re002"].includes(this.$route.params.id)) {
+                const radioButtonsArray = Array.from(radioButtons); // Convert NodeList to Array for easier index handling
+                // Clear all checked states first
+                radioButtonsArray.forEach(radio => {
+                    radio.checked = false;
+                });
+                // Check the radio button based on totalFingerCount - 1 (to account for the one-off difference)
+                const indexToCheck = this.totalFingerCount - 1;
+                if (indexToCheck >= 0 && indexToCheck < radioButtonsArray.length) {
+                    radioButtonsArray[indexToCheck].checked = true;
+                }
             }
         },
         showRewards() {
@@ -815,10 +856,16 @@ export default {
             // Call autoSelectAnswer whenever currentEmotion changes
             this.autoSelectAnswer();
         },
-        currentQuestionIndex(newVal, oldVal) {
+        async currentQuestionIndex(newVal, oldVal) {
             if (newVal !== oldVal) {
                 // If the index has changed, restart the countdown
                 this.restartCountdown();
+                if (this.questionType[newVal] === "math" || this.questionType[newVal] === "language") {
+                    this.initializeMediaPipe();
+                } else {
+                    await this.loadModels();
+                    this.initializeVideoStream();
+                }
             }
         },
     },
