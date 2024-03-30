@@ -183,12 +183,12 @@ export default {
             if (this.questionType[this.currentQuestionIndex] === "math" || this.questionType[this.currentQuestionIndex] === "language") {
                 this.initializeMediaPipe();
             } else {
+                this.restartCountdown();
                 await this.loadModels();
                 this.initializeVideoStream();
             }
         }
 
-        await this.startCountdown();
         // Run these methods after ensuring all necessary data has been fetched and set
         this.autoSelectAnswer();
         this.setCanvasSize();
@@ -235,8 +235,8 @@ export default {
                         isAnswerCorrect = answer === parseInt(this.correctOption[this.currentQuestionIndex], 10);
                         resultMessage = createResultMessage(isAnswerCorrect, answer);
                     } else if (["SE001", "SE002"].includes(this.$route.params.id)) {
-                        const answer = this.currentEmotion.toUpperCase(); // Normalize the case for comparison
-                        isAnswerCorrect = answer === this.correctOption[this.currentQuestionIndex].toUpperCase();
+                        const answer = this.currentEmotion // Normalize the case for comparison  
+                        isAnswerCorrect = answer === this.correctOption[this.currentQuestionIndex].charAt(0).toUpperCase() + this.correctOption[this.currentQuestionIndex].slice(1).toLowerCase();
                         resultMessage = createResultMessage(isAnswerCorrect, answer);
                     } else if (["Lan001", "Lan002"].includes(this.$route.params.id)) {
                         const answerIndex = this.totalFingerCount - 1; // Adjusted for zero-based indexing
@@ -299,6 +299,7 @@ export default {
             console.log('Models loaded');
         },
         async initializeVideoStream() {
+            this.startCountdown();
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
                 this.$refs.videoElement.srcObject = stream;
@@ -342,6 +343,7 @@ export default {
                     const maxEmotion = Object.keys(emotions).reduce((a, b) => emotions[a] > emotions[b] ? a : b);
                     this.currentEmotion = maxEmotion.charAt(0).toUpperCase() + maxEmotion.slice(1).toLowerCase();
                     // console.log(`Most prominent emotion: ${this.currentEmotion} with a probability of ${emotions[maxEmotion].toFixed(2)}`);
+                    console.log(`Most prominent emotion: ${this.currentEmotion}`);
                 }
 
                 requestAnimationFrame(onFrame);
@@ -372,6 +374,7 @@ export default {
 
             hands.onResults(this.onResults);
 
+            this.startCountdown();
             const camera = new Camera(videoElement, {
                 onFrame: async () => {
                     await hands.send({ image: videoElement });
@@ -795,7 +798,8 @@ export default {
             } else if (["SE001", "SE002", "Re001", "Re002"].includes(this.$route.params.id)) {
                 // Check the radio button that matches totalFingerCount
                 radioButtons.forEach((radio) => {
-                    radio.checked = radio.value == this.currentEmotion;
+                    radio.checked = radio.value.charAt(0).toUpperCase() + radio.value.slice(1).toLowerCase() == this.currentEmotion;
+                    // this.correctOption[this.currentQuestionIndex].charAt(0).toUpperCase() + this.correctOption[this.currentQuestionIndex].slice(1).toLowerCase();
                 });
             } else if (["Lan001", "Lan002", "Re001", "Re002"].includes(this.$route.params.id)) {
                 const radioButtonsArray = Array.from(radioButtons); // Convert NodeList to Array for easier index handling
@@ -856,14 +860,16 @@ export default {
             // Call autoSelectAnswer whenever currentEmotion changes
             this.autoSelectAnswer();
         },
-        async currentQuestionIndex(newVal, oldVal) {
+        currentQuestionIndex(newVal, oldVal) {
             if (newVal !== oldVal) {
                 // If the index has changed, restart the countdown
                 this.restartCountdown();
+            }
+            if (this.$route.params.id === "Re001" || this.$route.params.id === "Re002") {
                 if (this.questionType[newVal] === "math" || this.questionType[newVal] === "language") {
                     this.initializeMediaPipe();
                 } else {
-                    await this.loadModels();
+                    this.loadModels();
                     this.initializeVideoStream();
                 }
             }
