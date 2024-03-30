@@ -264,7 +264,7 @@ export default {
           //if the process is bad, set the color to red
           else if (this.performance[i] >= 25) {
             process.innerHTML = "Bad";
-            process.style.color = "#ff0000";
+            process.style.color = "#ffaec8";
           }
           else {
             process.innerHTML = "Poor";
