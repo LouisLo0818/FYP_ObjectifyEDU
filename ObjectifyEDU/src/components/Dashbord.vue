@@ -127,6 +127,37 @@
             <div class="card h-100"
               style="border: none;box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;">
               <h4 class="card-header" style="background: #ffffff;border-bottom: none;">Awards</h4>
+              <div class="card-body text-center" style="margin: auto auto;">
+                <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+                  <div class="col">
+                    <img src="../../src/assets/img/gold_coin.png" style="height: 70px; width: 70px;" />
+                  </div>
+                  <div class="col">
+                    <img src="../../src/assets/img/silver_coin.png" style="height: 70px; width: 70px;" />
+                  </div>
+                  <div class="col">
+                    <img src="../../src/assets/img/copper_coin.png" style="height: 70px; width: 70px;" />
+                  </div>
+                  <div class="col">
+                    <img src="../../src/assets/img/calendar.png" style="height: 70px; width: 70px;" />
+                  </div>
+                  <div class="col">
+                    <img src="../../src/assets/img/gold_medal.png" style="height: 70px; width: 70px;" />
+                  </div>
+                  <div class="col">
+                    <img src="../../src/assets/img/trophy.png" style="height: 70px; width: 70px;" />
+                  </div>
+                  <div class="col">
+                    <img src="../../src/assets/img/gold_star.png" style="height: 70px; width: 70px;" />
+                  </div>
+                  <div class="col">
+                    <img src="../../src/assets/img/silver_star.png" style="height: 70px; width: 70px;" />
+                  </div>
+                  <div class="col">
+                    <img src="../../src/assets/img/copper_star.png" style="height: 70px; width: 70px;" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

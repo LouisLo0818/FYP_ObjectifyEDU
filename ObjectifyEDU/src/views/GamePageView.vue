@@ -867,13 +867,13 @@ export default {
                 // If the index has changed, restart the countdown
                 this.restartCountdown();
                 if (this.$route.params.id === "Re001" || this.$route.params.id === "Re002") {
-                if (this.questionType[newVal] === "math" || this.questionType[newVal] === "language") {
-                    this.initializeMediaPipe();
-                } else {
-                    await this.loadModels();
-                    this.initializeVideoStream();
+                    if (this.questionType[newVal] === "math" || this.questionType[newVal] === "language") {
+                        this.initializeMediaPipe();
+                    } else {
+                        await this.loadModels();
+                        this.initializeVideoStream();
+                    }
                 }
-            }
             }
         },
     },
