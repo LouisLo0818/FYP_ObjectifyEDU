@@ -8,22 +8,22 @@
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #ffd786;"></div>
         <h6 class="fw-semibold flex-1 mb-0">Social - Emotional Development</h6>
-        <h6 class="fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+        <h6 class="fw-semibold mb-0" style="margin-left: auto;">40%</h6>
       </div>
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #bcefa1;"></div>
         <h6 class="fw-semibold flex-1 mb-0">Founddations of mathematics</h6>
-        <h6 class="fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+        <h6 class="fw-semibold mb-0" style="margin-left: auto;">20%</h6>
       </div>
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #87e2f5;"></div>
         <h6 class="fw-semibold flex-1 mb-0">Language</h6>
-        <h6 class="fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+        <h6 class="fw-semibold mb-0" style="margin-left: auto;">20%</h6>
       </div>
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #b8b9ff;"></div>
         <h6 class="fw-semibold flex-1 mb-0">Reaction</h6>
-        <h6 class="fw-semibold mb-0" style="margin-left: auto;">72%</h6>
+        <h6 class="fw-semibold mb-0" style="margin-left: auto;">20%</h6>
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@ export default {
               "rgba(135, 226, 245, 1)",
               "rgba(188, 239, 161, 1)",
             ],
-            data: [40, 20, 80, 10],
+            data: [40, 20, 20, 20],
             // borderWidth: 0, // Set the bar width here
           },
         ],

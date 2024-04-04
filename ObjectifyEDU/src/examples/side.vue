@@ -18,12 +18,6 @@
           <span>Courses</span>
         </li>
       </router-link>
-      <a href="#" class="path-title">
-        <li :class="sidebarItemClass('/schedule')">
-          <i class="bx bx-calendar path-icon"></i>
-          <span>Schedule</span>
-        </li>
-      </a>
     </ul>
   </div>
 </template>
