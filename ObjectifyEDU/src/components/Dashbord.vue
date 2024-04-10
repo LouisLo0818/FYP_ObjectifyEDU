@@ -129,31 +129,40 @@
               <h4 class="card-header" style="background: #ffffff;border-bottom: none;">Awards</h4>
               <div class="card-body text-center" style="margin: auto auto;">
                 <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-                  <div class="col">
+                  <div class="col img-container">
+                    <span class="tooltiptext">Exceptional Academic Excellence</span>
                     <img src="../../src/assets/img/gold_coin.png" style="height: 70px; width: 70px;" />
                   </div>
-                  <div class="col">
+                  <div class="col img-container">
+                    <span class="tooltiptext">Excellent Academic Performance</span>
                     <img src="../../src/assets/img/silver_coin.png" style="height: 70px; width: 70px;" />
                   </div>
-                  <div class="col">
+                  <div class="col img-container">
+                    <span class="tooltiptext">Effort and Participation</span>
                     <img src="../../src/assets/img/copper_coin.png" style="height: 70px; width: 70px;" />
                   </div>
-                  <div class="col">
+                  <div class="col img-container">
+                    <span class="tooltiptext">Perfect Attendance</span>
                     <img src="../../src/assets/img/calendar.png" style="height: 70px; width: 70px;" />
                   </div>
-                  <div class="col">
+                  <div class="col img-container">
+                    <span class="tooltiptext">Highest Scorer</span>
                     <img src="../../src/assets/img/gold_medal.png" style="height: 70px; width: 70px;" />
                   </div>
-                  <div class="col">
+                  <div class="col img-container">
+                    <span class="tooltiptext">Master of Challenges</span>
                     <img src="../../src/assets/img/trophy.png" style="height: 70px; width: 70px;" />
                   </div>
-                  <div class="col">
+                  <div class="col img-container">
+                    <span class="tooltiptext">Creative Excellence</span>
                     <img src="../../src/assets/img/gold_star.png" style="height: 70px; width: 70px;" />
                   </div>
-                  <div class="col">
+                  <div class="col img-container">
+                    <span class="tooltiptext">Innovative Thinking</span>
                     <img src="../../src/assets/img/silver_star.png" style="height: 70px; width: 70px;" />
                   </div>
-                  <div class="col">
+                  <div class="col img-container">
+                    <span class="tooltiptext">Original Contributions</span>
                     <img src="../../src/assets/img/copper_star.png" style="height: 70px; width: 70px;" />
                   </div>
                 </div>
@@ -495,5 +504,36 @@ body {
 .ranking-container {
   width: 93%;
   margin: 10px auto;
+}
+
+.img-container {
+  position: relative;
+  display: inline-block;
+}
+
+.img-container .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px; /* Use half of the width value to align tooltip */
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+
+.img-container:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+img {
+  opacity: 0.3;
 }
 </style>
