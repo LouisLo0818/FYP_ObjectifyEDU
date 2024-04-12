@@ -81,10 +81,15 @@ export default {
         localStorage.setItem("student_id", decoded.result.student_id);
         localStorage.setItem("username", decoded.result.username);
         localStorage.setItem("class_name", decoded.result.class_name);
+        localStorage.setItem("dayOfWeek", new Date().getDay());
 
         console.log(localStorage.getItem("student_id"));
         console.log(localStorage.getItem("username"));
         console.log(localStorage.getItem("class_name"));
+        console.log(localStorage.getItem("dayOfWeek"));
+
+        const loginTimestamp = new Date();
+        localStorage.setItem('loginTimestamp', loginTimestamp);
 
         alert("Login Successful.");
         location.assign("/Dashboard");

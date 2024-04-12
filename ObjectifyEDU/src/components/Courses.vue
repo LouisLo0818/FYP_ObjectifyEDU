@@ -8,7 +8,7 @@
       </div>
       <div class="container" style="margin: 0 auto; max-width: 95%; padding: 0 0">
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
-          <router-link v-for="(id, index) in  course_id " :to="`/Courses/Games/${id}`"
+          <router-link v-for="(id, index) in course_id " :to="`/Courses/Games/${id}`"
             style="text-decoration: none; color: inherit;">
             <div class="d-flex flex-column" style="margin: 0; padding: 0;">
               <div class="p-4 course-square">
@@ -56,10 +56,32 @@ export default {
       time: [],
       course_img: [],
       lessons: [],
+      hours: 0,
+      minutes: 0,
+      hours: 0,
+      lastMouseLeaveTime: null, // Store the last mouse leave time
+      dayOfWeek: new Date().getDay(),
     };
   },
   mounted() {
     this.fetchCourseId();
+    this.trackStayDuration();
+
+    const mainElement = document.querySelector('.container');
+    if (mainElement) {
+      mainElement.addEventListener('mouseleave', async () => {
+        this.trackStayDuration();
+        await this.updateActivityTime();
+      });
+    }
+  },
+  beforeDestroy() {
+    if (mainElement) {
+      mainElement.removeEventListener('mouseleave', async () => {
+        this.trackStayDuration();
+        await this.updateActivityTime();
+      });
+    }
   },
   methods: {
     async fetchCourseId() {
@@ -147,7 +169,64 @@ export default {
         console.error("Error fetching data:", error);
       }
     },
-  }
+    trackStayDuration() {
+      const currentTime = new Date();
+      if (this.lastMouseLeaveTime) {
+        const duration = currentTime - this.lastMouseLeaveTime; // Duration in milliseconds
+        const seconds = Math.floor((duration / 1000) % 60);
+        const minutes = Math.floor((duration / (1000 * 60)) % 60);
+        const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+        this.seconds = seconds;
+        this.minutes = minutes;
+        this.hours = hours;
+
+        console.log(`Duration since last leave: ${this.hours} hours, ${this.minutes} minutes, ${this.seconds} seconds`);
+
+        // Here you can call your updateActivityTime() method or any other logic
+        // For demonstration, I'm just logging the duration
+        // this.updateActivityTime(hours, minutes, seconds);
+      }
+      // Update lastMouseLeaveTime to current time
+      this.lastMouseLeaveTime = currentTime;
+    },
+    async updateActivityTime() {
+      try {
+        const token = localStorage.getItem("user");
+        const student_id = localStorage.getItem("student_id");
+
+        const studentInput = {
+          student_id: student_id,
+          dayOfWeek: this.dayOfWeek,
+          hours: this.hours,
+          minutes: this.minutes,
+          seconds: this.seconds
+        };
+
+        console.log(studentInput);
+
+        const response = await fetch("/api/updateActivityTime", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(studentInput),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
+  },
+  beforeDestroy() {
+    this.trackStayDuration();
+  },
 };
 </script>
 
