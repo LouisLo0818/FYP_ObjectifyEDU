@@ -136,6 +136,26 @@ router.post("/api/Process", async function (req, res) {
   return res.json(stuRecord);
 });
 
+router.post("/api/Account", async function (req, res) {
+  //verifyToken is a middleware function
+  // const database = client.db('eLearning');
+  const query = { student_id: req.body.student_id }; //object query
+
+  console.log(query);
+  let stuRecord = await client
+    .db("eLearning")
+    .collection("Account")
+    .findOne(query);
+
+  // let medinceRecord = await database.collection('medApp_medicineRecord').find(query).toArray();
+  if (!stuRecord) {
+    return res.status(404).send("No student record found."); //no need resultCode, just send error message
+  }
+  console.log(stuRecord);
+
+  return res.json(stuRecord);
+});
+
 router.get("/api/Courses", async function (req, res) {
   //verifyToken is a middleware function
   // const database = client.db('eLearning');
@@ -281,6 +301,104 @@ router.put("/api/feedback", async (req, res) => {
   } catch (error) {
     console.error("Error updating feedback:", error);
     res.status(500).json({ message: "Internal server error", error: error });
+  }
+});
+
+router.put("/api/updateActivityTime", async function (req, res) {
+  const database = client.db("eLearning");
+  const { student_id, dayOfWeek, hours, minutes, seconds } = req.body;
+
+  try {
+    const studentAccount = await database
+      .collection("Account")
+      .findOne({ student_id: student_id });
+    if (!studentAccount) {
+      return res.status(404).send({ message: "Account not found." });
+    }
+
+    // Find the current day's record if it exists
+    let dayRecord = studentAccount.activity_time.find(
+      (record) => record.dayOfWeek === dayOfWeek
+    );
+
+    // Calculate new total activity time for the day
+    let totalHours = dayRecord.hours + hours;
+    let totalMinutes = dayRecord.minutes + minutes;
+    let totalSeconds = dayRecord.seconds + seconds;
+
+    // Normalize time
+    totalMinutes += Math.floor(totalSeconds / 60);
+    totalSeconds %= 60;
+    totalHours += Math.floor(totalMinutes / 60);
+    totalMinutes %= 60;
+
+    // Update the record for the day
+    dayRecord.hours = totalHours;
+    dayRecord.minutes = totalMinutes;
+    dayRecord.seconds = totalSeconds;
+
+    // Update the student's activity time with the modified array
+    const updateResult = await database.collection("Account").updateOne(
+      { student_id: student_id },
+      {
+        $set: { activity_time: studentAccount.activity_time },
+      }
+    );
+
+    if (updateResult.matchedCount === 0) {
+      return res
+        .status(404)
+        .send({ message: "Failed to update activity time." });
+    }
+
+    return res.json({ message: "Activity time updated successfully." });
+  } catch (error) {
+    console.error("Error updating activity time:", error);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+});
+
+router.put("/api/updateLearningTime", async function (req, res) {
+  const { student_id, course, hours, minutes, seconds } = req.body;
+  const database = client.db("eLearning");
+
+  try {
+    // Fetch the current student account to update
+    const studentAccount = await database
+      .collection("Account")
+      .findOne({ student_id });
+    if (!studentAccount) {
+      return res.status(404).send({ message: "Account not found." });
+    }
+
+    // Find and update the learning time for the specified course
+    const updatedStudyTimes = studentAccount.study_time.map((studyTime) => {
+      if (studyTime.course === course) {
+        return {
+          ...studyTime,
+          hours: studyTime.hours + hours,
+          minutes: studyTime.minutes + minutes,
+          seconds: studyTime.seconds + seconds,
+        };
+      }
+      return studyTime;
+    });
+
+    // Update the student's document with the new learning times
+    const updateResult = await database
+      .collection("Account")
+      .updateOne({ student_id }, { $set: { study_time: updatedStudyTimes } });
+
+    if (updateResult.matchedCount === 0) {
+      return res
+        .status(404)
+        .send({ message: "Failed to update learning time." });
+    }
+
+    res.json({ message: "Learning time updated successfully." });
+  } catch (error) {
+    console.error("Error updating learning time:", error);
+    return res.status(500).send({ message: "Internal server error" });
   }
 });
 
