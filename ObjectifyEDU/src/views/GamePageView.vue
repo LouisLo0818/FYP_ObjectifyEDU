@@ -30,9 +30,10 @@ import rating from "@/examples/Rating.vue";
                         </div>
                         <div class="col" style="flex: 1">
                             <video ref="videoElement" class="input_video" autoplay muted></video>
-                            <canvas ref="canvasElement" class="output_canvas" :width="videoWidth"
-                                :height="videoHeight"></canvas>
+                            <canvas ref="canvasElement" class="output_canvas" :width="videoWidth" :height="videoHeight">
+                            </canvas>
                         </div>
+                        <!-- <spane style="position: absolute; margin-top: 300px;margin-left: 70px;z-index: 1;font-size: 70px;"><b style="color: blue;">{{ totalFingerCount }}</b></spane> -->
                     </div>
                     <div class="col" style="flex: 0;">
                         <div class="container overflow-hidden text-center answer-container">
@@ -162,6 +163,10 @@ export default {
             foundQuestionId: [],
             currentEmotion: '',
             questionType: [],
+            dayOfWeek: new Date().getDay(),
+            hours: 0,
+            minutes: 0,
+            seconds: 0,
         };
     },
     computed: {
@@ -188,7 +193,27 @@ export default {
             }
         }
 
-        await this.startCountdown();
+        this.trackStayDuration();
+
+        const mainElement = document.querySelector('.nav-action');
+        const secondElement = document.querySelector('.container');
+        if (mainElement) {
+            mainElement.addEventListener('mouseleave', async () => {
+                this.trackStayDuration();
+                await this.updateActivityTime();
+                await this.updateLearningTime();
+            });
+        }
+
+        if (secondElement) {
+            secondElement.addEventListener('mouseleave', async () => {
+                this.trackStayDuration();
+                await this.updateActivityTime();
+                await this.updateLearningTime();
+            });
+        }
+
+        // await this.startCountdown();
 
         // Run these methods after ensuring all necessary data has been fetched and set
         this.autoSelectAnswer();
@@ -208,6 +233,21 @@ export default {
         }
         window.removeEventListener('resize', this.setCanvasSize);
         //  # window.removeEventListener('resize', this.setCanvasContainer);
+    },
+    beforeDestroy() {
+        if (mainElement) {
+            mainElement.removeEventListener('mouseleave', async () => {
+                this.trackStayDuration();
+                await this.updateActivityTime();
+            });
+        }
+
+        if (secondElement) {
+            secondElement.addEventListener('mouseleave', async () => {
+                this.trackStayDuration();
+                await this.updateActivityTime();
+            });
+        }
     },
     methods: {
         playSound() {
@@ -323,8 +363,8 @@ export default {
                 if (videoEl.paused || videoEl.ended) return;
 
                 canvasEl.getContext('2d').save();
-                canvasEl.getContext('2d').scale(-1, 1); // Flip horizontally
-                canvasEl.getContext('2d').translate(-canvasEl.width, 0);
+                //canvasEl.getContext('2d').scale(-1, 1); // Flip horizontally
+                //canvasEl.getContext('2d').translate(-canvasEl.width, 0);
 
                 const detections = await faceapi.detectAllFaces(videoEl, new faceapi.TinyFaceDetectorOptions())
                     .withFaceLandmarks()
@@ -333,12 +373,11 @@ export default {
                 const resizedDetections = faceapi.resizeResults(detections, displaySize);
                 canvasEl.getContext('2d').clearRect(0, 0, canvasEl.width, canvasEl.height);
                 canvasEl.getContext('2d').drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
-
-                // faceapi.draw.drawDetections(canvasEl, resizedDetections);
-                // faceapi.draw.drawFaceLandmarks(canvasEl, resizedDetections);
-                // faceapi.draw.drawFaceExpressions(canvasEl, resizedDetections);
-
                 canvasEl.getContext('2d').restore();
+
+                faceapi.draw.drawDetections(canvasEl, resizedDetections);
+                faceapi.draw.drawFaceLandmarks(canvasEl, resizedDetections);
+                faceapi.draw.drawFaceExpressions(canvasEl, resizedDetections);
 
                 // Log the most prominent emotion detected for the first face (if any faces are detected)
                 if (detections && detections.length > 0) {
@@ -372,7 +411,7 @@ export default {
                 modelComplexity: 1,
                 selfieMode: true,
                 minDetectionConfidence: 0.5,
-                minTrackingConfidence: 0.5
+                minTrackingConfidence: 0.5,
             });
 
             hands.onResults(this.onResults);
@@ -842,6 +881,104 @@ export default {
             // Trigger both rewards
             // confettiReward();
             // emojiReward();
+        },
+        trackStayDuration() {
+            const currentTime = new Date();
+            if (this.lastMouseLeaveTime) {
+                const duration = currentTime - this.lastMouseLeaveTime; // Duration in milliseconds
+                const seconds = Math.floor((duration / 1000) % 60);
+                const minutes = Math.floor((duration / (1000 * 60)) % 60);
+                const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+                this.seconds = seconds;
+                this.minutes = minutes;
+                this.hours = hours;
+
+                console.log(`Duration since last leave: ${this.hours} hours, ${this.minutes} minutes, ${this.seconds} seconds`);
+
+                // Here you can call your updateActivityTime() method or any other logic
+                // For demonstration, I'm just logging the duration
+                // this.updateActivityTime(hours, minutes, seconds);
+            }
+            // Update lastMouseLeaveTime to current time
+            this.lastMouseLeaveTime = currentTime;
+        },
+        async updateActivityTime() {
+            try {
+                const token = localStorage.getItem("user");
+                const student_id = localStorage.getItem("student_id");
+
+                const studentInput = {
+                    student_id: student_id,
+                    dayOfWeek: this.dayOfWeek,
+                    hours: this.hours,
+                    minutes: this.minutes,
+                    seconds: this.seconds
+                };
+
+                console.log(studentInput);
+
+                const response = await fetch("/api/updateActivityTime", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        // Include the token in the Authorization header
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(studentInput),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        },
+        async updateLearningTime() {
+            try {
+                const token = localStorage.getItem("user");
+                const student_id = localStorage.getItem("student_id");
+                let course = "";
+
+                if (["SE001", "SE002"].includes(this.$route.params.id)) {
+                    course = "SE";
+                } else if (["Math001", "Math002"].includes(this.$route.params.id)) {
+                    course = "Math";
+                } else if (["Lan001", "Lan002"].includes(this.$route.params.id)) {
+                    course = "Lan";
+                } else if (["Re001", "Re002"].includes(this.$route.params.id)) {
+                    course = "Rec";
+                }
+
+                const studentInput = {
+                    student_id: student_id,
+                    course: course,
+                    hours: this.hours,
+                    minutes: this.minutes,
+                    seconds: this.seconds
+                };
+
+                console.log(studentInput);
+
+                const response = await fetch("/api/updateLearningTime", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        // Include the token in the Authorization header
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(studentInput),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
         },
     },
 
