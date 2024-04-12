@@ -1,29 +1,29 @@
 <template>
   <div class="container">
     <div class="chart-container">
-      <div style="position: absolute;font-size: 30px;">2H 35M</div>
-      <Doughnut :data="data" :options="options" />
+      <div style="position: absolute;font-size: 30px;">{{ hours }}H {{ minutes }}M</div>
+      <Doughnut v-if="data" :data="data" :options="options" />
     </div>
     <div style="margin-top: 20px;">
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #ffd786;"></div>
         <h6 class="fw-semibold flex-1 mb-0">Social - Emotional Development</h6>
-        <h6 class="fw-semibold mb-0" style="margin-left: auto;">40%</h6>
+        <h6 id="SE" class="fw-semibold mb-0" style="margin-left: auto;">{{ study_time[0] }}%</h6>
       </div>
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #bcefa1;"></div>
         <h6 class="fw-semibold flex-1 mb-0">Founddations of mathematics</h6>
-        <h6 class="fw-semibold mb-0" style="margin-left: auto;">20%</h6>
+        <h6 id="Math" class="fw-semibold mb-0" style="margin-left: auto;">{{ study_time[1] }}%</h6>
       </div>
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #87e2f5;"></div>
         <h6 class="fw-semibold flex-1 mb-0">Language</h6>
-        <h6 class="fw-semibold mb-0" style="margin-left: auto;">20%</h6>
+        <h6 id="Lan" class="fw-semibold mb-0" style="margin-left: auto;">{{ study_time[2] }}%</h6>
       </div>
       <div class="d-flex align-items-center mb-2">
         <div class="bullet-item me-2" style="background-color: #b8b9ff;"></div>
         <h6 class="fw-semibold flex-1 mb-0">Reaction</h6>
-        <h6 class="fw-semibold mb-0" style="margin-left: auto;">20%</h6>
+        <h6 id="Rec" class="fw-semibold mb-0" style="margin-left: auto;">{{ study_time[3] }}%</h6>
       </div>
     </div>
   </div>
@@ -33,6 +33,8 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "vue-chartjs";
 
+
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 export default {
   name: "App",
@@ -41,21 +43,26 @@ export default {
   },
   data() {
     return {
-      data: {
-        labels: ["Social - Emotional Development", "Reaction", "Language", "Founddations of mathematics"],
-        datasets: [
-          {
-            backgroundColor: [
-              "rgba(255, 215, 134, 1)",
-              "rgba(184, 185, 255, 1)",
-              "rgba(135, 226, 245, 1)",
-              "rgba(188, 239, 161, 1)",
-            ],
-            data: [40, 20, 20, 20],
-            // borderWidth: 0, // Set the bar width here
-          },
-        ],
-      },
+      study_time: [],
+      hours: 0,
+      minutes: 0,
+      data: null,
+      // data: {
+      //   labels: ["Social - Emotional Development", "Reaction", "Language", "Founddations of mathematics"],
+      //   datasets: [
+      //     {
+      //       backgroundColor: [
+      //         "rgba(255, 215, 134, 1)",
+      //         "rgba(184, 185, 255, 1)",
+      //         "rgba(135, 226, 245, 1)",
+      //         "rgba(188, 239, 161, 1)",
+      //       ],
+      //       // asign data value form the study_time
+      //       data: [],
+      //       // borderWidth: 0, // Set the bar width here
+      //     },
+      //   ],
+      // },
       options: {
         // How to make the labels below the chart?
 
@@ -89,6 +96,82 @@ export default {
         },
       },
     };
+  },
+  async mounted() {
+    await this.LearningTime();
+  },
+  methods: {
+    async LearningTime() {
+      try {
+        const stuid = localStorage.getItem("student_id");
+        const token = localStorage.getItem("user");
+
+        const stuidInput = {
+          student_id: stuid,
+        };
+
+        const response = await fetch('/api/Account', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(stuidInput),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch the student data");
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        const study_time = data.study_time;
+        console.log(study_time);
+
+        this.study_time = study_time.map(item => {
+          // Convert each time entry to total hours
+          return item.hours + (item.minutes / 60) + (item.seconds / 3600);
+        });
+
+        console.log(this.study_time);
+
+        // sum of all the study time
+        const total = this.study_time.reduce((acc, curr) => acc + curr, 0);
+        console.log(total);
+
+        this.hours = Math.floor(total);
+        this.minutes = Math.round((total - this.hours) * 60);
+        console.log(this.hours, this.minutes);
+
+        // calculate the percentage of each subject
+        const percentage = this.study_time.map(item => Math.round((item / total) * 100));
+        console.log(percentage);
+
+        this.study_time = percentage;
+
+        // add the data to the chart
+        this.data = {
+          labels: ["Social - Emotional Development", "Reaction", "Language", "Founddations of mathematics"],
+          datasets: [
+            {
+              backgroundColor: [
+                "rgba(255, 215, 134, 1)",
+                "rgba(184, 185, 255, 1)",
+                "rgba(135, 226, 245, 1)",
+                "rgba(188, 239, 161, 1)",
+              ],
+              // asign data value form the study_time
+              data: this.study_time,
+              // borderWidth: 0, // Set the bar width here
+            },
+          ],
+        };
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
   },
 };
 </script>

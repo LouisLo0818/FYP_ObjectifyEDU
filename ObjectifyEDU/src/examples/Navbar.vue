@@ -12,8 +12,6 @@
         <img src="../../src/assets/img/dog.png" alt="Avatar" class="avatar" />
       </button>
       <div class="dropdown-content" v-show="isOpen">
-        <a href="#" style="margin-top: 5px;"><i class="bi bi-person"></i> &nbsp; Profile</a>
-        <a href="#"><i class="bi bi-gear"></i> &nbsp; Settings</a>
         <a href="#" @click="logout"><i class="bi bi-box-arrow-left"></i> &nbsp; Logout</a>
       </div>
     </div>
@@ -25,7 +23,7 @@ export default {
   data() {
     return {
       isOpen: false, // dropdown menu is closed by default
-      showSideBar: true,
+      showSideBar: false,
     };
   },
   computed: {
@@ -48,7 +46,19 @@ export default {
       this.isOpen = !this.isOpen;
     },
     toggleSidebar() {
+      // Toggle the value of showSideBar between true and false
       this.showSideBar = !this.showSideBar;
+
+      // from Dashboard.vue
+      const main = document.querySelector("main");
+      main.style.marginLeft = this.showSideBar ? "0" : "-260px";
+
+      // if screen size is less than 768px, set the margin-left to 0
+      console.log(screen.width);
+
+      main.style.transition = "margin-left 0.5s ease";
+
+
     },
     logout() {
       console.log("logout");
@@ -112,7 +122,7 @@ export default {
   z-index: 1;
   border-radius: 8px;
   /* Add border-radius to the dropdown menu */
-  height: 155px;
+  height: 50px;
 }
 
 /* Style the dropdown items */
