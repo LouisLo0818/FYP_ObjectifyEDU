@@ -107,6 +107,8 @@ export default {
                     }
                 }
 
+                
+
                 // this.chartConfig.data.datasets[0].data = this.activityTime;
                 // console.log(this.chartConfig.data.datasets[0].data);
 

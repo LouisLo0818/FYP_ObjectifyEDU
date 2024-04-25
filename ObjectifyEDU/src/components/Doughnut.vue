@@ -152,14 +152,14 @@ export default {
 
         // add the data to the chart
         this.data = {
-          labels: ["Social - Emotional Development", "Reaction", "Language", "Founddations of mathematics"],
+          labels: ["Social - Emotional Development", "Founddations of mathematics", "Language", "Reaction"],
           datasets: [
             {
               backgroundColor: [
                 "rgba(255, 215, 134, 1)",
-                "rgba(184, 185, 255, 1)",
-                "rgba(135, 226, 245, 1)",
                 "rgba(188, 239, 161, 1)",
+                "rgba(135, 226, 245, 1)",
+                "rgba(184, 185, 255, 1)",
               ],
               // asign data value form the study_time
               data: this.study_time,

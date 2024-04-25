@@ -213,7 +213,7 @@ export default {
             });
         }
 
-        // await this.startCountdown();
+        await this.startCountdown();
 
         // Run these methods after ensuring all necessary data has been fetched and set
         this.autoSelectAnswer();
@@ -288,6 +288,21 @@ export default {
                         } else {
                             console.warn("Invalid answer index:", answerIndex);
                         }
+                    } else if (["Re001", "Re002"].includes(this.$route.params.id)) {
+                        if (this.questionType[this.currentQuestionIndex] === "math" || this.questionType[this.currentQuestionIndex] === "language") {
+                            const answer = this.totalFingerCount;
+                            isAnswerCorrect = answer === parseInt(this.correctOption[this.currentQuestionIndex], 10);
+                            resultMessage = createResultMessage(isAnswerCorrect, answer);
+                        } else {
+                            const answer = this.currentEmotion // Normalize the case for comparison  
+                            isAnswerCorrect = answer === this.correctOption[this.currentQuestionIndex].charAt(0).toUpperCase() + this.correctOption[this.currentQuestionIndex].slice(1).toLowerCase();
+                            resultMessage = createResultMessage(isAnswerCorrect, answer);
+                        }
+                        // } else if(this.currentQuestionIndex === 1){
+                        //     const answer = this.currentEmotion // Normalize the case for comparison  
+                        //     isAnswerCorrect = answer === this.correctOption[this.currentQuestionIndex].charAt(0).toUpperCase() + this.correctOption[this.currentQuestionIndex].slice(1).toLowerCase();
+                        //     resultMessage = createResultMessage(isAnswerCorrect, answer);
+                        // }
                     }
 
                     // Update localStorage based on isAnswerCorrect
@@ -306,9 +321,15 @@ export default {
                             // Move to the next question only if the answer is correct
                             const nextQuestionIndex = this.currentQuestionIndex + 1;
                             localStorage.setItem('currentQuestionIndex', nextQuestionIndex.toString());
+                            // clear canvas object
+                            this.$refs.videoElement.srcObject = null;
+                            this.$refs.canvasElement = null;
+                            window.location.reload();
                         } else {
                             const nextQuestionIndex = this.currentQuestionIndex;
                             localStorage.setItem('currentQuestionIndex', nextQuestionIndex.toString());
+                            this.$refs.videoElement.srcObject = null;
+                            this.$refs.canvasElement = null;
                         }
                         // Reload the page to reflect changes or navigate accordingly
                         window.location.reload();
@@ -363,8 +384,8 @@ export default {
                 if (videoEl.paused || videoEl.ended) return;
 
                 canvasEl.getContext('2d').save();
-                //canvasEl.getContext('2d').scale(-1, 1); // Flip horizontally
-                //canvasEl.getContext('2d').translate(-canvasEl.width, 0);
+                canvasEl.getContext('2d').scale(-1, 1); // Flip horizontally
+                canvasEl.getContext('2d').translate(-canvasEl.width, 0);
 
                 const detections = await faceapi.detectAllFaces(videoEl, new faceapi.TinyFaceDetectorOptions())
                     .withFaceLandmarks()
@@ -375,9 +396,9 @@ export default {
                 canvasEl.getContext('2d').drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
                 canvasEl.getContext('2d').restore();
 
-                faceapi.draw.drawDetections(canvasEl, resizedDetections);
-                faceapi.draw.drawFaceLandmarks(canvasEl, resizedDetections);
-                faceapi.draw.drawFaceExpressions(canvasEl, resizedDetections);
+                //faceapi.draw.drawDetections(canvasEl, resizedDetections);
+                //faceapi.draw.drawFaceLandmarks(canvasEl, resizedDetections);
+                //faceapi.draw.drawFaceExpressions(canvasEl, resizedDetections);
 
                 // Log the most prominent emotion detected for the first face (if any faces are detected)
                 if (detections && detections.length > 0) {
@@ -836,12 +857,43 @@ export default {
                         radio.checked = radio.value == this.totalFingerCount;
                     });
                 }
-            } else if (["SE001", "SE002", "Re001", "Re002"].includes(this.$route.params.id)) {
+            } else if (["SE001", "SE002"].includes(this.$route.params.id)) {
                 // Check the radio button that matches totalFingerCount
                 radioButtons.forEach((radio) => {
                     radio.checked = radio.value.charAt(0).toUpperCase() + radio.value.slice(1).toLowerCase() == this.currentEmotion;
                     // this.correctOption[this.currentQuestionIndex].charAt(0).toUpperCase() + this.correctOption[this.currentQuestionIndex].slice(1).toLowerCase();
                 });
+            } else if (["Re001", "Re002"].includes(this.$route.params.id)) {
+                if (this.questionType[this.currentQuestionIndex] === "math") {
+                    // Uncheck all if totalFingerCount is 0
+                    if (this.totalFingerCount === 0) {
+                        radioButtons.forEach((radio) => {
+                            radio.checked = false;
+                        });
+                    } else {
+                        // Check the radio button that matches totalFingerCount
+                        radioButtons.forEach((radio) => {
+                            radio.checked = radio.value == this.totalFingerCount;
+                        });
+                    }
+                } else if (this.questionType[this.currentQuestionIndex] === "language") {
+                    const radioButtonsArray = Array.from(radioButtons); // Convert NodeList to Array for easier index handling
+                    // Clear all checked states first
+                    radioButtonsArray.forEach(radio => {
+                        radio.checked = false;
+                    });
+                    // Check the radio button based on totalFingerCount - 1 (to account for the one-off difference)
+                    const indexToCheck = this.totalFingerCount - 1;
+                    if (indexToCheck >= 0 && indexToCheck < radioButtonsArray.length) {
+                        radioButtonsArray[indexToCheck].checked = true;
+                    }
+                } else if (this.questionType[this.currentQuestionIndex] === "social"){
+                    // Check the radio button that matches totalFingerCount
+                    radioButtons.forEach((radio) => {
+                        radio.checked = radio.value.charAt(0).toUpperCase() + radio.value.slice(1).toLowerCase() == this.currentEmotion;
+                        // this.correctOption[this.currentQuestionIndex].charAt(0).toUpperCase() + this.correctOption[this.currentQuestionIndex].slice(1).toLowerCase();
+                    });
+                }
             } else if (["Lan001", "Lan002", "Re001", "Re002"].includes(this.$route.params.id)) {
                 const radioButtonsArray = Array.from(radioButtons); // Convert NodeList to Array for easier index handling
                 // Clear all checked states first

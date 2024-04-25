@@ -26,6 +26,7 @@
                             <div class="p-4 course-square">
                                 <div style="height: 50%;">
                                     <h4>{{ gameName[index] }}</h4>
+                                    <span><b :style="{ color: color[index] }">{{ difficulty[index] }}</b></span>
                                 </div>
                                 <div style="height: 30%;margin-top: 20px;">
                                     <div class="lesson-container" style="padding-top: 10px;">
@@ -60,9 +61,13 @@
 </template>
 
 <script>
+import { color } from 'chart.js/helpers';
+
 export default {
     data() {
         return {
+            color: ["green", "green", "blue", "blue", "red", "red"],
+            difficulty: ["Easy", "Easy", "Normal", "Normal", "Hard", "Hard"],
             SEDbar: [],
             game_id: [],
             gameName: [],
@@ -74,6 +79,8 @@ export default {
     mounted() {
         this.fetchCourseId();
         this.trackStayDuration();
+
+
 
         const mainElement = document.querySelector('.container');
         if (mainElement) {

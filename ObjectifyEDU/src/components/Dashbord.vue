@@ -193,6 +193,7 @@ export default {
     return {
       userName: [],
       performance: [],
+      activityTime: [],
       awards: { "gold_coin": 0, "silver_coin": 0, "copper_coin": 0, "calendar": 0, "gold_medal": 0, "trophy": 0, "gold_star": 0, "silver_star": 0, "copper_star": 0 },
       loginTimestamp: localStorage.getItem("loginTimestamp"),
       dayOfWeek: new Date().getDay(),
@@ -200,6 +201,7 @@ export default {
       minutes: 0,
       seconds: 0,
       lastMouseLeaveTime: null, // Store the last mouse leave time
+      totalQuestions: 100,
     };
   },
   mounted() {
@@ -207,7 +209,7 @@ export default {
     this.fetchRanking();
     this.CalculatePerformance();
     this.trackStayDuration();
-
+    this.ActivityTime();
     const mainElement = document.querySelector('.container');
     if (mainElement) {
       mainElement.addEventListener('mouseleave', async () => {
@@ -291,6 +293,7 @@ export default {
         const studentData = await studentResponse.json();
         const courses = studentData[0].courses;
 
+
         // Function to calculate performance metrics
         const calculateMetrics = (courseList) => {
           let totalQuestions = 0;
@@ -348,15 +351,17 @@ export default {
           }
         }
 
-        console.log('Social Total Win Rate:', socialMetrics.winRate);
-        console.log('Math Total Win Rate:', mathMetrics.winRate);
+        //console.log('Social Total Win Rate:', socialMetrics.winRate);
+        console.log((socialMetrics.totalCorrect / 100) * 100);
+        //console.log('Math Total Win Rate:', mathMetrics.winRate);
+        console.log((mathMetrics.totalCorrect / 100) * 100);
         console.log('Language Total Win Rate:', languageMetrics.winRate);
         console.log('Reaction Total Win Rate:', reactionMetrics.winRate);
 
         // copper_coin : 2 category game win rate >= 30 
         // silver_coin : 3 category game win rate >= 50 
         // gold_coin : 4 category game win rate >= 70 
-        if (((socialMetrics.winRate / 100) * 50) >= 30 && ((mathMetrics.winRate / 100) * 50) >= 30 && ((languageMetrics.winRate / 100) * 50) >= 30 && ((reactionMetrics.winRate / 100) * 50) >= 30) {
+        if ((socialMetrics.totalCorrect / 100) * 100 >= 30 || ((mathMetrics.totalCorrect / 100) * 100) >= 30 || ((languageMetrics.totalCorrect / 100) * 100) >= 30 || ((reactionMetrics.totalCorrect / 100) * 100) >= 30) {
           this.awards.copper_coin = 1;
         } else if (((socialMetrics.winRate / 100) * 50) >= 50 && ((mathMetrics.winRate / 100) * 50) >= 50 && ((languageMetrics.winRate / 100) * 50) >= 50 && ((reactionMetrics.winRate / 100) * 50) >= 50) {
           this.awards.silver_coin = 1;
@@ -364,6 +369,12 @@ export default {
           this.awards.gold_coin = 1;
         }
         // calendar : if student day 1 - 7, actitvity time above 1 hours
+
+        // if activityTime all >= 0.3
+        if (this.activityTime[0] >= 0.3 && this.activityTime[1] >= 0.3 && this.activityTime[2] >= 0.3 && this.activityTime[3] >= 0.3 && this.activityTime[4] >= 0.3 && this.activityTime[5] >= 0.3 && this.activityTime[6] >= 0.3) {
+          this.awards.calendar = 1;
+        }
+
 
 
         // gold_medal : Highest score in the class
@@ -471,7 +482,45 @@ export default {
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    }
+    },
+    async ActivityTime() {
+      try {
+        const stuid = localStorage.getItem("student_id");
+        const token = localStorage.getItem("user");
+
+        const stuidInput = {
+          student_id: stuid,
+        };
+
+        const response = await fetch('/api/Account', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(stuidInput),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch the student data");
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        const activityTime = data.activity_time;
+        console.log(activityTime);
+
+        this.activityTime = activityTime.map(item => {
+          // Convert each time entry to total hours
+          return item.hours + (item.minutes / 60) + (item.seconds / 3600);
+        });
+
+        console.log(this.activityTime);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
   },
   beforeDestroy() {
     this.trackStayDuration();
